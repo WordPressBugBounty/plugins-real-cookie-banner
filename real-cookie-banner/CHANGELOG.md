@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.0.1 (2024-11-11)
+
+
+### Bug Fixes
+
+* compatibility with Widget Google Reviews plugin when Trustindex is lazy loaded (CU-8696jdgn1)
+* md5 passing null to parameter [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () of type string is deprecated (CU-8696jfb32)
+
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.0.1</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Bug Fixes
+
+* the PSR-0 Requests_... class names in the Requests library are deprecated (CU-8696jfb32)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner 1.0.1</summary>
+
+
+**_Purpose of dependency:_** _Provide UI for a cookie banner and content blocker for multiple services._
+##### Bug Fixes
+
+* cookie banner with close icon could no longer be replied in List of consents (CU-8696k7mj7)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-queue 1.0.1</summary>
+
+
+**_Purpose of dependency:_** _Provide a promise-based queue system working in frontend for client and server tasks_
+##### Bug Fixes
+
+* ignore warnings in error handler when executing server task (CU-8696k7mj7)</details>
+
+
+
+
+
 # 5.0.0 (2024-11-07)
 
 
