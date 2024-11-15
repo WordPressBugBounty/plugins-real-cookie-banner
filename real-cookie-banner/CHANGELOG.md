@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.0.2 (2024-11-15)
+
+
+### Bug Fixes
+
+* print stack trace to response when migrating to v5 database schema (CU-8696mgmwa)
+* table wp_rcb_consent does not exist (CU-8696mgmwa)
+
+
+
+
+
+
+
 ## 5.0.1 (2024-11-11)
 
 
