@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.0.3 (2024-11-19)
+
+
+### Bug Fixes
+
+* dashboard runs into timeout error and is not loading (CU-8696kbfvh)
+
+
+<details><summary>Dependency updates @devowl-wp/fast-html-tag 1.1.0</summary>
+
+
+**_Purpose of dependency:_** _Find tags within HTML content and modify it in speed of light_
+##### Features
+
+* never apply content blocker to <template HTML tags (CU-8696jdgn1)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.1.0</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Features
+
+* never apply content blocker to <template HTML tags (CU-8696jdgn1)</details>
+
+
+
+
+
 ## 5.0.2 (2024-11-15)
 
 
