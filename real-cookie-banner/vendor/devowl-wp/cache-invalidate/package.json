@@ -1,6 +1,6 @@
 {
     "name": "@devowl-wp/cache-invalidate",
-    "version": "1.18.28",
+    "version": "1.18.37",
     "private": true,
     "description": "Provide a single entry point to trigger cache invalidation of known caching plugins",
     "homepage": "https://devowl.io",
@@ -10,7 +10,13 @@
         "**/*.{css,scss,less}",
         "./src/public/ts/*.tsx"
     ],
-    "main": "lib/index.tsx",
+    "type": "module",
+    "exports": {
+        ".": {
+            "devowl-source": "./lib/index.tsx",
+            "default": "./lib/index.js"
+        }
+    },
     "files": [
         "dist",
         "dev",
@@ -54,7 +60,7 @@
         "@devowl-wp/ts-config": "workspace:*",
         "@devowl-wp/utils": "workspace:*",
         "@devowl-wp/webpack-config": "workspace:*",
-        "ts-node": "catalog:build",
+        "@swc-node/register": "catalog:build",
         "tslib": "catalog:build",
         "typescript": "catalog:build",
         "webpack": "catalog:webpack",
@@ -62,9 +68,6 @@
     },
     "peerDependencies": {
         "@devowl-wp/utils": "workspace:*"
-    },
-    "engines": {
-        "node": ">=14.15.0"
     },
     "continuous-localization": {
         "locales": {
@@ -165,9 +168,6 @@
         },
         "module": {
             "type": "es6"
-        },
-        "env": {
-            "coreJs": 3
         },
         "sourceMaps": true
     }

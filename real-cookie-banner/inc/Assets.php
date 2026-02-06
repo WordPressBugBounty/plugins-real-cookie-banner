@@ -144,12 +144,26 @@ class Assets
                 $this->enqueueBlocker(\array_merge($scriptDeps, [$handle]));
             }
         }
+        /**
+         * If you return `true`, the optimized wp_localize_script will be used:
+         *
+         * - Moves the JSON to the footer but keeps the banner script in the header
+         * - Bypasses the JSON.parse call from the HTML parsing process and just exposes the raw JSON string in the inline script in the HTML
+         * - This improves performance as the JSON parsing is offloaded to a deferred script
+         *
+         * @hook RCB/Experimental/OptimizedWpLocalizeScript
+         * @param {boolean} $useOptimizedWpLocalizeScript
+         * @return {boolean}
+         * @since 5.2.10
+         */
+        $useOptimizedWpLocalizeScript = $this->isAdvancedEnqueueEnabled($handle, Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER) ? \apply_filters('RCB/Experimental/OptimizedWpLocalizeScript', \false) : \false;
         // Localize script with server-side variables
-        $this->anonymous_localize_script($handle, 'realCookieBanner', $this->localizeScript($type), [
+        $this->anonymous_localize_script($useOptimizedWpLocalizeScript ? $this->enqueueFooterDummyHandle() : $handle, 'realCookieBanner', $this->localizeScript($type), [
             'makeBase64Encoded' => [Cookie::META_NAME_CODE_OPT_IN, Cookie::META_NAME_CODE_OPT_OUT, Cookie::META_NAME_CODE_ON_PAGE_LOAD, 'contactEmail'],
             'useCore' => !\in_array($type, [Constants::ASSETS_TYPE_FRONTEND, Constants::ASSETS_TYPE_LOGIN], \true) && !\is_customize_preview(),
             // Only allow lazy parse in frontend (also not in customizer) as this conflicts with Mobx observables
             'lazyParse' => \in_array($type, [Constants::ASSETS_TYPE_FRONTEND], \true) && !\is_customize_preview() ? ['others.frontend.tcf', 'others.frontend.groups', 'others.customizeValuesBanner'] : [],
+            'bypassJsonParse' => $useOptimizedWpLocalizeScript,
         ]);
     }
     /**
@@ -159,7 +173,6 @@ class Assets
      */
     public function enqueueAdminPage($scriptDeps)
     {
-        $useNonMinifiedSources = $this->useNonMinifiedSources();
         \array_unshift($scriptDeps, 'wp-codemirror', 'jquery-ui-sortable');
         \wp_enqueue_media();
         // Enqueue code mirror to edit JavaScript files
@@ -375,6 +388,9 @@ class Assets
             'type' => \_x('Type', 'legal-text', RCB_TD),
             'purpose' => \_x('Purpose', 'legal-text', RCB_TD),
             'purposes' => \_x('Purposes', 'legal-text', RCB_TD),
+            'description' => \_x('Description', 'legal-text', RCB_TD),
+            'optOut' => \_x('Opt-out', 'legal-text', RCB_TD),
+            'optOutDesc' => \_x('Cookie can be set to store opt-out of the described behaviour.', 'legal-text', RCB_TD),
             'headerTitlePrivacyPolicyHistory' => \_x('History of your privacy settings', 'legal-text', RCB_TD),
             'skipToConsentChoices' => \_x('Skip to consent choices', 'legal-text', RCB_TD),
             'historyLabel' => \_x('Show consent from', 'legal-text', RCB_TD),

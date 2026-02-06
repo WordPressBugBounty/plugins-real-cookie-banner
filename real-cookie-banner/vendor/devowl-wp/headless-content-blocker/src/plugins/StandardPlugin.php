@@ -91,6 +91,8 @@ class StandardPlugin extends AbstractPlugin
             'a[href:matchesUrl()][data-rel*="prettyPhoto":confirm(),keepAttributes(value=data-rel)]',
             // [Plugin Comp] Bricks Builder
             'div[data-iframe-src:matchesUrl(),delegateClick()]',
+            // [Plugin Comp] https://totalwptheme.com/docs/adding-ilightbox-popups-inline/
+            'a[href:matchesUrl()][class*="wpex-lightbox":confirm(),keepAttributes(value=href,class)]',
         ]);
         /**
          * `<div>` elements are expensive in Regexp cause there a lot of them, let's assume only a
@@ -239,6 +241,18 @@ class StandardPlugin extends AbstractPlugin
             'fluentComAdmin',
             // [Plugin Comp] WP Amelia
             '/var wpAmeliaSettings/m',
+            // [Plugin Comp] Solid Security
+            'ITSECRecaptchaOptIn',
+            // [Plugin Comp] Bricks Builder
+            '/var bricksData/m',
+            // [Plugin Comp] PixelYourSite
+            '/var pysOptions/m',
+            // [Plugin Comp] WP Grid Builder
+            'wpgb_settings',
+            // [Plugin Comp] Fluent Calendar
+            '/var fluentCalendarPublicVars/m',
+            // [Plugin Comp] RafflePress
+            '/var rafflepress_api_url/m',
         ]);
         /**
          * DoNotBlockScriptTextTemplates.
