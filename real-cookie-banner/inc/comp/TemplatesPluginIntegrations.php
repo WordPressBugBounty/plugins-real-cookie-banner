@@ -436,6 +436,14 @@ class TemplatesPluginIntegrations
                         $template->rules[] = ['expression' => $ruleExpression, 'roles' => [BlockerTemplate::ROLE_SCANNER]];
                     }
                     break;
+                case 'ipinfo':
+                    $ruleExpression = '!jQuery(\'.ff_form*#ff_*_phone");';
+                    foreach ($template->rules as &$rule) {
+                        if ($rule['expression'] === $ruleExpression) {
+                            $rule['roles'] = [BlockerTemplate::ROLE_BLOCKER];
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

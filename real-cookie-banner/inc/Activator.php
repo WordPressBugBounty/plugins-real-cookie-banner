@@ -85,7 +85,7 @@ class Activator
     public function addInitialContent()
     {
         // Only create in admin backend (e. g. PolyLang currentLanguage is not available in REST API requests)
-        if (!\is_admin() && \current_user_can(\DevOwl\RealCookieBanner\Core::MANAGE_MIN_CAPABILITY)) {
+        if (!\is_admin() || !\current_user_can(\DevOwl\RealCookieBanner\Core::MANAGE_MIN_CAPABILITY)) {
             return;
         }
         $compLanguage = \DevOwl\RealCookieBanner\Core::getInstance()->getCompLanguage();

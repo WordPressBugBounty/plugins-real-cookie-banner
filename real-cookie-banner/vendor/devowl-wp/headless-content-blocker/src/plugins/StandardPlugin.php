@@ -253,6 +253,10 @@ class StandardPlugin extends AbstractPlugin
             '/var fluentCalendarPublicVars/m',
             // [Plugin Comp] RafflePress
             '/var rafflepress_api_url/m',
+            // [Plugin Comp] WP Travel Engine
+            '/window\\.wteL10n/m',
+            // [Plugin Comp] Bold Themes Page Builder
+            '/window\\.bt_bb_fe_elements/m',
         ]);
         /**
          * DoNotBlockScriptTextTemplates.
@@ -330,6 +334,8 @@ class StandardPlugin extends AbstractPlugin
         $scriptInlineJsonBlocker->addSchema('jetMenuMobileWidgetRenderData', '/(window\\.jetMenuMobileWidgetRenderData[^=]+=)(.*)(;)$/m');
         // [Plugin Comp] https://wordpress.org/plugins/ays-chatgpt-assistant/
         $scriptInlineJsonBlocker->addSchema('AysChatGPTChatSettings', '/(var\\s*AysChatGPTChatSettings[^=]+=)(.*)(;)$/ms');
+        // [Plugin Comp] WP Travel Engine
+        $scriptInlineJsonBlocker->addSchema('wtePreFetch', '/(window\\.wtePreFetch[^=]+=)(.*)(;)$/m');
         $cb->addPlugin(Image::class);
         /**
          * Plugin.

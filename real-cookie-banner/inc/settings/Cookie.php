@@ -123,8 +123,9 @@ class Cookie
      */
     public function getOrdered($groupId, $force = \false, $usePosts = null)
     {
-        if ($force === \false && isset($this->cacheGetOrdered[$groupId]) && $usePosts === null) {
-            return $this->cacheGetOrdered[$groupId];
+        $cacheKey = $groupId === null ? '' : $groupId;
+        if ($force === \false && isset($this->cacheGetOrdered[$cacheKey]) && $usePosts === null) {
+            return $this->cacheGetOrdered[$cacheKey];
         }
         $posts = [];
         if ($usePosts) {
@@ -193,7 +194,7 @@ class Cookie
             }
         }
         if ($usePosts === null) {
-            $this->cacheGetOrdered[$groupId] = $posts;
+            $this->cacheGetOrdered[$cacheKey] = $posts;
         }
         return $posts;
     }

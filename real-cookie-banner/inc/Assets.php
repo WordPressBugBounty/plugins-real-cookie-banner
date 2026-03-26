@@ -242,7 +242,7 @@ class Assets
             // Only enable the advanced enqueue when we are not relying on `react-dom` as this could lead to issues with
             // e.g. WP Fastest Cache which moves `react-dom` to the body footer -> "Undefined variable ReactDOM" error.
             if (!\is_customize_preview()) {
-                $this->enableAdvancedEnqueue($preloadJs, $advancedFeatures);
+                $this->enableAdvancedEnqueue($preloadJs, $advancedFeatures, 'script', ['banner-ui', 'banner-lazy', 'banner-common-async', 'vendor-banner-common-async']);
                 $this->enableAdvancedEnqueue($preloadCss, $advancedFeatures, 'style');
             }
             $excludeAssets->byHandle('js', $preloadJs);
@@ -272,6 +272,7 @@ class Assets
         }
         if ($handle !== \false) {
             $this->enableDeferredEnqueue($handle);
+            $this->enablePreloadEnqueue($handle, 'script');
             $excludeAssets = \DevOwl\RealCookieBanner\Core::getInstance()->getExcludeAssets();
             $excludeAssets->byHandle('js', [$handle]);
         }

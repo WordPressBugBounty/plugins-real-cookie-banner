@@ -125,7 +125,7 @@ class Utils
             return $url;
         }
         // Get arguments in requested URL (ported from `add_query_arg`)
-        list(, $query) = \explode('?', $url, 2);
+        [, $query] = \explode('?', $url, 2);
         \wp_parse_str($query, $queryParameters);
         // Get arguments in current permalink settings
         $permalink_structure = \get_option('permalink_structure');
@@ -430,7 +430,7 @@ class Utils
      */
     public static function isFrontend()
     {
-        $isFrontend = !\is_admin() && !\wp_doing_cron() && !\wp_doing_ajax() && !self::isCLI();
+        $isFrontend = !\is_admin() && !\wp_doing_cron() && !\wp_doing_ajax() && !self::isCLI() && !self::isDownload();
         if ($isFrontend && self::isPageBuilder()) {
             return \false;
         }
@@ -458,7 +458,7 @@ class Utils
     {
         foreach (\headers_list() as $line) {
             $header = \strtolower($line);
-            if (\preg_match('/content-disposition\\s*:\\s*(?:attachment|inline)/m', $header) || self::startsWith($header, 'content-type: multipart/form-data') && \strpos($header, 'boundary') !== \false) {
+            if (\preg_match('/content-disposition\\s*:\\s*(?:attachment|inline)/m', $header) || self::startsWith($header, 'content-type: multipart/form-data') && \strpos($header, 'boundary') !== \false || \preg_match('/content-type\\s*:\\s*application\\/octet-stream/m', $header)) {
                 return \true;
             }
         }
@@ -559,10 +559,10 @@ class Utils
      */
     public static function getOriginalHomeUrl()
     {
-        // Multisite subdomain installations are forced to use the `home_url` option
-        // See also https://github.com/WordPress/WordPress/blob/4e4016f61fa40abda4c0a0711496f2ba50a10563/wp-includes/ms-blogs.php#L249
-        $isMultisiteSubdomainInstallation = \is_multisite() && \defined('SUBDOMAIN_INSTALL') && \constant('SUBDOMAIN_INSTALL');
-        if (!$isMultisiteSubdomainInstallation && \defined('WP_HOME')) {
+        // In multisite, `switch_to_blog()` must resolve the hostname from the current blog's
+        // persisted options. A global `WP_SITEURL` constant can be request-dependent and would
+        // otherwise make every subsite look like the same host.
+        if (!\is_multisite() && \defined('WP_HOME')) {
             // Constant is defined (https://wordpress.org/support/article/changing-the-site-url/#edit-wp-config-php)
             $home_url = \constant('WP_HOME');
         } else {

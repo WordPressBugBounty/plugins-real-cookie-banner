@@ -108,7 +108,7 @@ class Utils
         if (self::startsWith($string, '{')) {
             return $string;
         }
-        if (\function_exists('gzuncompress')) {
+        if (\is_string($string) && \function_exists('gzuncompress')) {
             return \gzuncompress(\base64_decode($string));
         }
         return $default;
