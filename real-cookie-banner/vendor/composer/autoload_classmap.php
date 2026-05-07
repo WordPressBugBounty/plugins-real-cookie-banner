@@ -6,7 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'DevOwl\\RealCookieBanner\\Vendor\\Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'DevOwl\\RealCookieBanner\\Activator' => $baseDir . '/inc/Activator.php',
     'DevOwl\\RealCookieBanner\\AdInitiator' => $baseDir . '/inc/AdInitiator.php',
     'DevOwl\\RealCookieBanner\\Assets' => $baseDir . '/inc/Assets.php',
@@ -233,7 +233,6 @@ return array(
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\client\\TelemetryData' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/client/TelemetryData.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\License' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/license/License.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\LicenseActivation' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/license/LicenseActivation.php',
-    'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\PluginUpdateChecker' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/license/PluginUpdateChecker.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\PluginUpdateLicensePool' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/license/PluginUpdateLicensePool.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\TelemetryData' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/license/TelemetryData.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\rest\\Announcement' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/rest/Announcement.php',

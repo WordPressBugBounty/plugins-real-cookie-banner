@@ -68,7 +68,9 @@ class SavingConsentViaRestApiEndpointChecker
         $this->start = \microtime(\true);
         // Include Basic auth in loopback requests.
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-            $this->requestArguments['headers']['Authorization'] = 'Basic ' . \base64_encode(\wp_unslash($_SERVER['PHP_AUTH_USER']) . ':' . \wp_unslash($_SERVER['PHP_AUTH_PW']));
+            $phpAuthUser = \sanitize_text_field(\wp_unslash($_SERVER['PHP_AUTH_USER']));
+            $phpAuthPassword = \sanitize_text_field(\wp_unslash($_SERVER['PHP_AUTH_PW']));
+            $this->requestArguments['headers']['Authorization'] = 'Basic ' . \base64_encode($phpAuthUser . ':' . $phpAuthPassword);
         }
         // Include all cookies except WordPress login cookies
         foreach ($_COOKIE as $key => $value) {

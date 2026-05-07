@@ -277,7 +277,7 @@ class Blocker
     /**
      * Check if content blocker is enabled on the current request.
      */
-    protected function isEnabled()
+    public function isEnabled()
     {
         global $wp_query;
         $isEnabled = (Utils::isFrontend() || $this->isAdminAjaxAction()) && General::getInstance()->isBannerActive() && General::getInstance()->isBlockerActive() && !\is_customize_preview() && !$this->isCurrentRequestException();
@@ -308,7 +308,7 @@ class Blocker
      */
     protected function isCurrentRequestException()
     {
-        return isset($_GET['callback']) && $_GET['callback'] === 'map-iframe' || isset($_GET['lease']) && \preg_match('/^[a-f0-9]{32}$/i', $_GET['lease']) || isset($_GET['trustindex-google-widget-content']);
+        return isset($_GET['callback']) && $_GET['callback'] === 'map-iframe' || isset($_GET['lease']) && \preg_match('/^[a-f0-9]{32}$/i', \sanitize_text_field(\wp_unslash($_GET['lease']))) || isset($_GET['trustindex-google-widget-content']);
     }
     /**
      * Allows to modify content within a `admin-ajax.php` action.
@@ -317,6 +317,7 @@ class Blocker
     {
         $doingAjax = \wp_doing_ajax();
         // Special case: WP Grid Builder and adding the `DOING_AJAX` constant manually.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- presence-only check for admin-ajax vendor compatibility flag.
         if ($doingAjax && isset($_POST['wpgb'])) {
             return \true;
         }

@@ -78,7 +78,7 @@ class NavMenuLinks
             Checklist::getInstance()->toggle(Shortcode::IDENTIFIER, \true);
             return $result;
         } else {
-            return new WP_Error('rcb_nav_menu_non_existing', \__('The navigation menu could not be found.', RCB_TD));
+            return new WP_Error('rcb_nav_menu_non_existing', \__('The navigation menu could not be found.', 'real-cookie-banner'));
         }
     }
     /**
@@ -95,7 +95,24 @@ class NavMenuLinks
         $td = Hooks::getInstance()->createTemporaryTextDomain();
         $result = [];
         $fnCalculateResult = function ($domain) use(&$result) {
-            $result = ['#consent-change' => ['label' => \_x('Change privacy settings', 'legal-text', RCB_TD), 'linkText' => \_x('Change privacy settings', 'legal-text', $domain)], '#consent-history' => ['label' => \_x('Privacy settings history', 'legal-text', RCB_TD), 'linkText' => \_x('Privacy settings history', 'legal-text', $domain)], '#consent-revoke' => ['label' => \_x('Revoke consents', 'legal-text', RCB_TD), 'linkText' => \_x('Revoke consents', 'legal-text', $domain), 'meta' => [self::META_SUCCESS_MESSAGE_META_NAME => \_x('You have successfully revoked consent for services with its cookies and personal data processing. The page will be reloaded now!', 'legal-text', $domain)]]];
+            $result = ['#consent-change' => [
+                'label' => \_x('Change privacy settings', 'legal-text', 'real-cookie-banner'),
+                // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
+                'linkText' => \_x('Change privacy settings', 'legal-text', $domain),
+            ], '#consent-history' => [
+                'label' => \_x('Privacy settings history', 'legal-text', 'real-cookie-banner'),
+                // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
+                'linkText' => \_x('Privacy settings history', 'legal-text', $domain),
+            ], '#consent-revoke' => [
+                'label' => \_x('Revoke consents', 'legal-text', 'real-cookie-banner'),
+                // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
+                'linkText' => \_x('Revoke consents', 'legal-text', $domain),
+                // phpcs:enable
+                'meta' => [
+                    // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
+                    self::META_SUCCESS_MESSAGE_META_NAME => \_x('You have successfully revoked consent for services with its cookies and personal data processing. The page will be reloaded now!', 'legal-text', $domain),
+                ],
+            ]];
         };
         if ($language !== null) {
             $compLanguage = Core::getInstance()->getCompLanguage();
@@ -103,7 +120,9 @@ class NavMenuLinks
                 $fnCalculateResult($compLanguage->getTemporaryTextDomainName());
             });
         } else {
-            $fnCalculateResult(Hooks::TD_FORCED);
+            $td->translate(function () use($fnCalculateResult) {
+                $fnCalculateResult('real-cookie-banner');
+            });
         }
         $td->teardown();
         return $result;
@@ -135,7 +154,7 @@ class NavMenuLinks
                 name="%4$s[%1$d]" value="%3$s"
             />
         </label>
-    </p>', $item_id, \__('Success message', RCB_TD), $successMessage, self::META_SUCCESS_MESSAGE_FIELD_ID);
+    </p>', (int) $item_id, \esc_html__('Success message', 'real-cookie-banner'), \esc_attr(\is_scalar($successMessage) ? (string) $successMessage : ''), \esc_attr(self::META_SUCCESS_MESSAGE_FIELD_ID));
         }
     }
     /**
@@ -147,9 +166,10 @@ class NavMenuLinks
      */
     public function wp_update_nav_menu_item($menu_id, $menu_item_db_id, $args)
     {
-        $successMessage = $_POST[self::META_SUCCESS_MESSAGE_FIELD_ID][$menu_item_db_id] ?? null;
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- navigation menu screen verifies nonce before save hooks fire.
+        $successMessage = isset($_POST[self::META_SUCCESS_MESSAGE_FIELD_ID][$menu_item_db_id]) ? \sanitize_text_field(\wp_unslash($_POST[self::META_SUCCESS_MESSAGE_FIELD_ID][$menu_item_db_id])) : null;
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
         if ($successMessage !== null) {
-            $successMessage = \sanitize_text_field($successMessage);
             \update_post_meta($menu_item_db_id, self::META_SUCCESS_MESSAGE_META_NAME, $successMessage);
         }
         if (isset($args['menu-item-url']) && \in_array($args['menu-item-url'], $this->getLinkElements(\true), \true)) {
@@ -248,7 +268,7 @@ class NavMenuLinks
             <span class="spinner"></span>
        </span>
     </div>
-</div>', \walk_nav_menu_tree(\array_map('wp_setup_nav_menu_item', $nav_items), 0, (object) ['walker' => $walker]), \disabled($nav_menu_selected_id, 0), \esc_attr(\__('Add to Menu')));
+</div>', \walk_nav_menu_tree(\array_map('wp_setup_nav_menu_item', $nav_items), 0, (object) ['walker' => $walker]), \disabled($nav_menu_selected_id, 0), \esc_attr(\__('Add to Menu', 'real-cookie-banner')));
     }
     /**
      * Correct "Custom link" to "Real Cookie Banner" type label.

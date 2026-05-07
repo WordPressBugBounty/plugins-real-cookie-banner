@@ -119,61 +119,61 @@ class CookiePolicy extends AbstractCookiePolicy
         if (Core::getInstance()->getCompLanguage()->isCurrentlyInEditorPreview()) {
             return $text;
         }
-        $euLegalBasis = \_x('Art. 5 (3) ePrivacy Directive and Recital 66 ePrivacy Directive', 'gdpr-legal-basis', RCB_TD);
+        $euLegalBasis = \_x('Art. 5 (3) ePrivacy Directive and Recital 66 ePrivacy Directive', 'gdpr-legal-basis', 'real-cookie-banner');
         $locale = \get_locale();
         $localeTwoLetter = \substr($locale, 0, 2);
         switch ($localeTwoLetter) {
             case 'nl':
-                $euLegalBasis = \_x('Article 11.7a Dutch Telecommunications Act (Telecommunicatiewet) and Article 129 Electronic Communications Act (Wet betreffende de elektronische communicatie, Belgium)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 11.7a Dutch Telecommunications Act (Telecommunicatiewet) and Article 129 Electronic Communications Act (Wet betreffende de elektronische communicatie, Belgium)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'fi':
-                $euLegalBasis = \_x('§ 205 Act on electronic communications services (Laki sähköisen viestinnän palveluista)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 205 Act on electronic communications services (Laki sähköisen viestinnän palveluista)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'fr':
-                $euLegalBasis = \_x('Article 82 Data Protection Act (Loi informatique et libertés, France) and Article 129 Electronic Communications Act (Loi relative aux communications electroniques, Belgium)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 82 Data Protection Act (Loi informatique et libertés, France) and Article 129 Electronic Communications Act (Loi relative aux communications electroniques, Belgium)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'de':
-                $euLegalBasis = \_x('§ 25 TDDDG (Germany) and § 165 TKG (Austria)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 25 TDDDG (Germany) and § 165 TKG (Austria)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'el':
-                $euLegalBasis = \_x('Article 4 (5) of Law 3471/2006 (Protection of personal data and privacy in the electronic communications sector and amendment of Law 2472/1997)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 4 (5) of Law 3471/2006 (Protection of personal data and privacy in the electronic communications sector and amendment of Law 2472/1997)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'pt':
-                $euLegalBasis = \_x('Article 5 Electronic Communications Privacy Law (Lei da Privacidade nas Comunicações Eletrónicas)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 5 Electronic Communications Privacy Law (Lei da Privacidade nas Comunicações Eletrónicas)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'es':
-                $euLegalBasis = \_x('Article 22 (2) Information Society Services and e-Commerce Act (LSSI, Ley de Servicios de la Sociedad de la Información y de Comercio Electrónico)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 22 (2) Information Society Services and e-Commerce Act (LSSI, Ley de Servicios de la Sociedad de la Información y de Comercio Electrónico)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             default:
                 break;
         }
         switch ($locale) {
             case 'cs_CZ':
-                $euLegalBasis = \_x('§ 89 (3) Electronic Communications Act (Zákon o elektronických komunikacích)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 89 (3) Electronic Communications Act (Zákon o elektronických komunikacích)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'da_DK':
-                $euLegalBasis = \_x('§ 3 Cookie Order (Cookiebekendtgørelsen)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 3 Cookie Order (Cookiebekendtgørelsen)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'hu_HU':
-                $euLegalBasis = \_x('§ 13/A Act on certain aspects of electronic commerce services and information society services (Törvény az elektronikus kereskedelmi szolgáltatások, valamint az információs társadalommal összefüggő szolgáltatások egyes kérdéseiről)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 13/A Act on certain aspects of electronic commerce services and information society services (Törvény az elektronikus kereskedelmi szolgáltatások, valamint az információs társadalommal összefüggő szolgáltatások egyes kérdéseiről)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'it_IT':
-                $euLegalBasis = \_x('Section 122 Italian personal data protection code (Codice in materia di protezione dei dati personali)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Section 122 Italian personal data protection code (Codice in materia di protezione dei dati personali)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'nn_NO':
-                $euLegalBasis = \_x('§ 2-7b Electronic Communications Act (Elektroniskekommunikasjonsloven)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 2-7b Electronic Communications Act (Elektroniskekommunikasjonsloven)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'pl_PL':
-                $euLegalBasis = \_x('§ 173 Telecommunications Act (Prawo telekomunikacyjne)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('§ 173 Telecommunications Act (Prawo telekomunikacyjne)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'ro_RO':
-                $euLegalBasis = \_x('Article 4 Act on the Processing of Personal Data and the Protection of Privacy in the Electronic Communications Sector (LEGE privind prelucrarea datelor cu caracter personal și protecția vieții private în sectorul comunicațiilor electronice)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 4 Act on the Processing of Personal Data and the Protection of Privacy in the Electronic Communications Sector (LEGE privind prelucrarea datelor cu caracter personal și protecția vieții private în sectorul comunicațiilor electronice)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'sk_SK':
-                $euLegalBasis = \_x('Article 55 Electronic Communications Act (zákon elektronických komunikáciách)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Article 55 Electronic Communications Act (zákon elektronických komunikáciách)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             case 'sv_SE':
-                $euLegalBasis = \_x('Chapter 9 Section 28 Swedish Electronic Communications Act (Lag om elektronisk kommunikation)', 'gdpr-legal-basis', RCB_TD);
+                $euLegalBasis = \_x('Chapter 9 Section 28 Swedish Electronic Communications Act (Lag om elektronisk kommunikation)', 'gdpr-legal-basis', 'real-cookie-banner');
                 break;
             default:
                 break;
@@ -203,7 +203,7 @@ class CookiePolicy extends AbstractCookiePolicy
         if (\count($nonDefaultGroups) > 0 && $this->isShowCustomGroups()) {
             $typesOfCookiesText .= \sprintf('<p>%s</p>', \sprintf(
                 // translators:
-                \_x('In addition, cookies can also be used by services from the following groups or for the following purposes: %s', 'legal-text', RCB_TD),
+                \_x('In addition, cookies can also be used by services from the following groups or for the following purposes: %s', 'legal-text', 'real-cookie-banner'),
                 \join(', ', \array_map(function ($group) {
                     return $group->getName();
                 }, $nonDefaultGroups))
@@ -234,7 +234,7 @@ class CookiePolicy extends AbstractCookiePolicy
     // Documented in AbstractCookiePolicy
     public function getControllerOfWebsiteLabels()
     {
-        return ['provider' => \_x('Provider', 'legal-text', RCB_TD), 'phone' => \_x('Phone', 'legal-text', RCB_TD), 'email' => \_x('Email', 'legal-text', RCB_TD), 'contactForm' => \_x('Contact form', 'legal-text', RCB_TD)];
+        return ['provider' => \_x('Provider', 'legal-text', 'real-cookie-banner'), 'phone' => \_x('Phone', 'legal-text', 'real-cookie-banner'), 'email' => \_x('Email', 'legal-text', 'real-cookie-banner'), 'contactForm' => \_x('Contact form', 'legal-text', 'real-cookie-banner')];
     }
     /**
      * Translate a string from the customizer texts.
@@ -249,23 +249,23 @@ class CookiePolicy extends AbstractCookiePolicy
     // Documented in AbstractCookiePolicy
     public function getListOfServicesTableColumnLabels()
     {
-        return ['category' => \_x('Category', 'legal-text', RCB_TD), 'tcfVendors' => \_x('TCF vendors', 'legal-text', RCB_TD), 'technicalCookieDefinition' => \_x('Technical cookie name', 'legal-text', RCB_TD), 'technicalCookieHost' => \_x('Technical cookie host', 'legal-text', RCB_TD), 'service' => \_x('Service', 'legal-text', RCB_TD), 'purpose' => \_x('Purpose', 'legal-text', RCB_TD), 'undefined' => '-', 'duration' => \_x('Duration', 'legal-text', RCB_TD), 'durationUnit' => ['n1' => ['s' => \__('second', RCB_TD), 'm' => \__('minute', RCB_TD), 'h' => \__('hour', RCB_TD), 'd' => \__('day', RCB_TD), 'mo' => \__('month', RCB_TD), 'y' => \__('year', RCB_TD)], 'nx' => ['s' => \__('seconds', RCB_TD), 'm' => \__('minutes', RCB_TD), 'h' => \__('hours', RCB_TD), 'd' => \__('days', RCB_TD), 'mo' => \__('months', RCB_TD), 'y' => \__('years', RCB_TD)]], 'type' => \_x('Type', 'legal-text', RCB_TD)];
+        return ['category' => \_x('Category', 'legal-text', 'real-cookie-banner'), 'tcfVendors' => \_x('TCF vendors', 'legal-text', 'real-cookie-banner'), 'technicalCookieDefinition' => \_x('Technical cookie name', 'legal-text', 'real-cookie-banner'), 'technicalCookieHost' => \_x('Technical cookie host', 'legal-text', 'real-cookie-banner'), 'service' => \_x('Service', 'legal-text', 'real-cookie-banner'), 'purpose' => \_x('Purpose', 'legal-text', 'real-cookie-banner'), 'undefined' => '-', 'duration' => \_x('Duration', 'legal-text', 'real-cookie-banner'), 'durationUnit' => ['n1' => ['s' => \__('second', 'real-cookie-banner'), 'm' => \__('minute', 'real-cookie-banner'), 'h' => \__('hour', 'real-cookie-banner'), 'd' => \__('day', 'real-cookie-banner'), 'mo' => \__('month', 'real-cookie-banner'), 'y' => \__('year', 'real-cookie-banner')], 'nx' => ['s' => \__('seconds', 'real-cookie-banner'), 'm' => \__('minutes', 'real-cookie-banner'), 'h' => \__('hours', 'real-cookie-banner'), 'd' => \__('days', 'real-cookie-banner'), 'mo' => \__('months', 'real-cookie-banner'), 'y' => \__('years', 'real-cookie-banner')]], 'type' => \_x('Type', 'legal-text', 'real-cookie-banner')];
     }
     // Documented in AbstractCookiePolicy
     public function getGridJsLanguageTexts()
     {
-        return ['search' => ['placeholder' => \__('Search...', RCB_TD)], 'sort' => ['sortAsc' => \__('Sort column ascending', RCB_TD), 'sortDesc' => \__('Sort column descending', RCB_TD)], 'pagination' => [
-            'previous' => \__('Previous', RCB_TD),
-            'next' => \__('Next', RCB_TD),
+        return ['search' => ['placeholder' => \__('Search...', 'real-cookie-banner')], 'sort' => ['sortAsc' => \__('Sort column ascending', 'real-cookie-banner'), 'sortDesc' => \__('Sort column descending', 'real-cookie-banner')], 'pagination' => [
+            'previous' => \__('Previous', 'real-cookie-banner'),
+            'next' => \__('Next', 'real-cookie-banner'),
             // translators:
-            'navigate' => \__('Page %1$d of %2$d', RCB_TD),
+            'navigate' => \__('Page %1$d of %2$d', 'real-cookie-banner'),
             // translators:
-            'page' => \__('Page %d', RCB_TD),
-            'showing' => \__('Showing', RCB_TD),
-            'of' => \__('of', RCB_TD),
-            'to' => \__('to', RCB_TD),
-            'results' => \__('results', RCB_TD),
-        ], 'noRecordsFound' => \__('No matching records found', RCB_TD)];
+            'page' => \__('Page %d', 'real-cookie-banner'),
+            'showing' => \__('Showing', 'real-cookie-banner'),
+            'of' => \__('of', 'real-cookie-banner'),
+            'to' => \__('to', 'real-cookie-banner'),
+            'results' => \__('results', 'real-cookie-banner'),
+        ], 'noRecordsFound' => \__('No matching records found', 'real-cookie-banner')];
     }
     /**
      * Add a "Cookie Policy Page" post state like "Privacy Policy Page" to the created cookie policy.
@@ -276,7 +276,7 @@ class CookiePolicy extends AbstractCookiePolicy
     public function display_post_states($post_states, $post)
     {
         if ($post->ID === \DevOwl\RealCookieBanner\settings\General::getInstance()->getCookiePolicyId()) {
-            $post_states['rcb_page_for_cookie_policy'] = \__('Cookie Policy Page', RCB_TD);
+            $post_states['rcb_page_for_cookie_policy'] = \__('Cookie Policy Page', 'real-cookie-banner');
         }
         return $post_states;
     }
@@ -289,7 +289,7 @@ class CookiePolicy extends AbstractCookiePolicy
     public function page_row_actions($actions, $post)
     {
         if ($post->ID === \DevOwl\RealCookieBanner\settings\General::getInstance()->getCookiePolicyId()) {
-            $actions['rcb_edit_for_cookie_policy'] = \sprintf('<a href="%s">%s</a>', \esc_url(\add_query_arg(['autofocus[section]' => BannerCookiePolicy::SECTION, 'return' => \wp_get_raw_referer()], \admin_url('customize.php'))), \__('Customize cookie policy content', RCB_TD));
+            $actions['rcb_edit_for_cookie_policy'] = \sprintf('<a href="%s">%s</a>', \esc_url(\add_query_arg(['autofocus[section]' => BannerCookiePolicy::SECTION, 'return' => \wp_get_raw_referer()], \admin_url('customize.php'))), \__('Customize cookie policy content', 'real-cookie-banner'));
         }
         return $actions;
     }

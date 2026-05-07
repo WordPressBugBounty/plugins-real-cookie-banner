@@ -149,7 +149,7 @@ class Reset
                 $name = $compLanguage->getTranslatedName($lang);
                 return ['name' => $name, 'code' => $lang, 'isRequired' => \in_array($lang, $requiredLanguages, \true), 'isDisabled' => $compLanguage instanceof Weglot, 'notice' => $compLanguage instanceof Weglot && $lang !== $defaultLanguage ? \sprintf(
                     // translators:
-                    \__('Your multilingual plugin Weglot does currently not support resetting texts for %s.', RCB_TD),
+                    \__('Your multilingual plugin Weglot does currently not support resetting texts for %s.', 'real-cookie-banner'),
                     $name
                 ) : null];
             }, $compLanguage instanceof Weglot ? \array_unique(\array_merge($activeLanguages, $dry)) : $dry);

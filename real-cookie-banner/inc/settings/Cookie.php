@@ -77,7 +77,7 @@ class Cookie
      */
     public function register()
     {
-        $labels = ['name' => \__('Cookies', RCB_TD), 'singular_name' => \__('Cookie', RCB_TD)];
+        $labels = ['name' => \__('Cookies', 'real-cookie-banner'), 'singular_name' => \__('Cookie', 'real-cookie-banner')];
         $args = ['label' => $labels['name'], 'labels' => $labels, 'description' => '', 'public' => \false, 'publicly_queryable' => \false, 'show_ui' => \true, 'show_in_rest' => \true, 'rest_base' => self::CPT_NAME, 'rest_controller_class' => WP_REST_Posts_Controller::class, 'has_archive' => \false, 'show_in_menu' => \false, 'show_in_nav_menus' => \false, 'delete_with_user' => \false, 'exclude_from_search' => \true, 'capabilities' => self::CAPABILITIES, 'map_meta_cap' => \false, 'hierarchical' => \false, 'rewrite' => \false, 'query_var' => \true, 'supports' => ['title', 'editor', 'custom-fields', 'page-attributes']];
         \register_post_type(self::CPT_NAME, $args);
         \register_meta('post', \DevOwl\RealCookieBanner\settings\Blocker::META_NAME_PRESET_ID, ['object_subtype' => self::CPT_NAME, 'type' => 'string', 'single' => \true, 'show_in_rest' => \true]);
@@ -251,7 +251,7 @@ class Cookie
             $result[$row->ID] = $row;
         }
         if (\count($result) === 0) {
-            return new WP_Error('not_found', \__('Not found'), ['status' => 404]);
+            return new WP_Error('not_found', \__('Not found', 'real-cookie-banner'), ['status' => 404]);
         }
         return \array_values($this->getOrdered(null, \false, $result));
     }

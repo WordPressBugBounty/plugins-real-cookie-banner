@@ -3,6 +3,434 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.2.22 (2026-05-07)
+
+
+### Bug Fixes
+
+* allow to translate technical cookie definition purposes via TranslatePress (CU-869ap8eg8)
+* compatibility with Fluent Forms with IPinfo (CU-869cwa620)
+* declare GPL license in plugin headers (CU-869d454p5)
+* g.legalBasisConsentWithoutVisualContentBlocker.map is not a function (CU-869cupn9u)
+* prevent client-side rule tries to block when content blocker is disabled (CU-869cx5jzf)
+* uncaught TypeError: substr(): Argument [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () must be of type string, array given (CU-869cx9ua6)
+
+
+### Build System
+
+* improve build tasks for stripping variant markers for free version (CU-869d454p5)
+
+
+### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)
+
+
+### Maintenance
+
+* add security hashes (CU-861mmp30r)
+
+
+<details><summary>Dependency updates @devowl-wp/cache-invalidate 1.18.45</summary>
+
+
+**_Purpose of dependency:_** _Provide a single entry point to trigger cache invalidation of known caching plugins_
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-management 1.0.48</summary>
+
+
+**_Purpose of dependency:_** _Provide cookie consent management with adapters to your environment_
+##### Bug Fixes
+
+* uncaught TypeError: substr(): Argument [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () must be of type string, array given (CU-869cx9ua6)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/customize 1.13.21</summary>
+
+
+**_Purpose of dependency:_** _Abstract utility for live preview (customize)_
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/deliver-anonymous-asset 1.0.46</summary>
+
+
+**_Purpose of dependency:_** _Provide a functionality to deliver assets anonymous_
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/fast-html-tag 1.3.8</summary>
+
+
+**_Purpose of dependency:_** _Find tags within HTML content and modify it in speed of light_
+##### Bug Fixes
+
+* uncaught TypeError: substr(): Argument [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () must be of type string, array given (CU-869cx9ua6)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/freemium 1.3.138</summary>
+
+
+**_Purpose of dependency:_** _Make your plugin to a freemium plugin with predefined Envato support_
+##### Build System
+
+* improve build tasks for stripping variant markers for free version (CU-869d454p5)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.8</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Bug Fixes
+
+* compatibility with fast.wistia.net and downloading Thumbnails (CU-869cet823)
+* uncaught TypeError: substr(): Argument [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () must be of type string, array given (CU-869cx9ua6)
+* update selector syntax in Style plugin to remove tag from generated selector (CU-869cpagbc)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-unblocker 1.3.3</summary>
+
+
+**_Purpose of dependency:_** _Unblock mechanism for @devowl-wp/headless-content-blocker with visual capabilities._
+##### Bug Fixes
+
+* mount click gateway via capture-phase document listener before others delegate (CU-869cpagbc)</details>
+
+<details><summary>Dependency updates @devowl-wp/multilingual 1.14.21</summary>
+
+
+**_Purpose of dependency:_** _Provide helper functionality for multilingual plugins like WPML and PolyLang_
+##### Bug Fixes
+
+* allow to translate technical cookie definition purposes via TranslatePress (CU-869ap8eg8)
+* uncaught TypeError: substr(): Argument [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () must be of type string, array given (CU-869cx9ua6)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-product-manager-wp-client 1.20.21</summary>
+
+
+**_Purpose of dependency:_** _A WordPress client for Real Product Manager_
+##### Bug Fixes
+
+* uncaught TypeError: substr(): Argument [#1](https://git.owlinfra.de/devowlio/devowl-wp/issues/1) () must be of type string, array given (CU-869cx9ua6)
+
+
+##### Build System
+
+* improve build tasks for stripping variant markers for free version (CU-869d454p5)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-queue 1.1.21</summary>
+
+
+**_Purpose of dependency:_** _Provide a promise-based queue system working in frontend for client and server tasks_
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-utils 1.14.21</summary>
+
+
+**_Purpose of dependency:_** _Create cross-selling ads, about page, rating and newsletter input for WP Real plugins._
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/service-cloud-consumer 1.0.41</summary>
+
+
+**_Purpose of dependency:_** _Consume service and blocker templates from service cloud_
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.21</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Bug Fixes
+
+* deduplicate repeated frontend preload links in wp_head output (CU-869chp8wu)
+* free versions Cannot declare InstalledVersions fatal error (CU-8696ru88g)
+
+
+##### Build System
+
+* improve build tasks for stripping variant markers for free version (CU-869d454p5)
+
+
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Development dependency update @devowl-wp/composer-licenses 0.1.21</summary>
+
+
+**_Purpose of dependency:_** _Helper functionalities for your composer project to validate licenses and generate a disclaimer._
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+<details><summary>Development dependency update @devowl-wp/phpcs-config 0.1.20</summary>
+
+
+**_Purpose of dependency:_** _Predefined functionalities for PHPCS._
+##### Code Refactoring
+
+* enable more WPCS rules and use correct wordpress.org text domain (CU-869d454p5)</details>
+
+
+
+
+
+## 5.2.21 (2026-04-29) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+
+### Maintenance
+
+* introduce automated development environments with Ansible (CU-869cxr1cn)
+
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-web-client 1.0.43</summary>
+
+
+**_Purpose of dependency:_** _Apply cookies consent (opt-in, opt-out) to the current webpage._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.7</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Tests
+
+* flaky tests (CU-869cyyxer)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-unblocker 1.3.2</summary>
+
+
+**_Purpose of dependency:_** _Unblock mechanism for @devowl-wp/headless-content-blocker with visual capabilities._
+##### Tests
+
+* flaky tests (CU-869cyyxer)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner 1.1.32</summary>
+
+
+**_Purpose of dependency:_** _Provide UI for a cookie banner and content blocker for multiple services._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner-admin 1.1.33</summary>
+
+
+**_Purpose of dependency:_** _Provide admin UI for a cookie banner and content blocker for multiple services._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-utils 1.0.21</summary>
+
+
+**_Purpose of dependency:_** _Provide various React utils, side effect free and tree shakeable._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Dependency updates @devowl-wp/resolve-none-computed-style 1.1.56</summary>
+
+
+**_Purpose of dependency:_** _Read the actually applied CSS property value instead of the calculated one._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Dependency updates @devowl-wp/web-html-element-interaction-recorder 1.0.21</summary>
+
+
+**_Purpose of dependency:_** _Record and replay interactions on a given HTML element._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-integration 0.8.3</summary>
+
+
+**_Purpose of dependency:_** _DevOps macros, job templates and jobs for Gitlab CI and @devowl-wp/node-gitlab-ci._
+##### Bug Fixes
+
+* patch wp-cli/i18n-command regex bug in Dockerfile to make Real Physical Media translations work (CU-869d346j5)
+
+
+##### Build System
+
+* initially introduce ansible and step-ca (CU-869cxr1cn, CU-869cyyxer)
+* manage swarm-internal-manager-1 via ansible and trust CA for CI access (CU-869cyyxer)
+
+
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)
+
+
+##### Continuous Integration
+
+* custom browserless image with custom TLS certificate support (CU-869cb1mbz)
+
+
+##### Maintenance
+
+* pin Docker DIND version to v28 for GitLab CI compatibility (CU-869crn919)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-localization 0.8.37</summary>
+
+
+**_Purpose of dependency:_** _Provide a CLI to push and pull localization files from different translation management systems._
+##### Bug Fixes
+
+* using develop as weblate fallback on non existing branches due to missing pipeline run (CU-869crn919)
+
+
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/monorepo-utils 0.2.27</summary>
+
+
+**_Purpose of dependency:_** _Predefined monorepo utilities and tasks._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/node-gitlab-ci 0.8.19</summary>
+
+
+**_Purpose of dependency:_** _Create dynamic GitLab CI pipelines in JavaScript or TypeScript for each project. Reuse and inherit instructions and avoid duplicate code!_
+##### Bug Fixes
+
+* add normalization function for GitLab trace line prefixes to improve log parsing in CI summary (CU-319766g)
+* support OCI image manifests and resolve digests correctly (CU-319766g)
+* update container registry image validation to support multiple manifest types in request headers (CU-319766g)
+
+
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/regexp-translation-extractor 0.2.52</summary>
+
+
+**_Purpose of dependency:_** _Provide a performant translation extractor based on regular expression._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/web-cookie-banner 1.0.26</summary>
+
+
+**_Purpose of dependency:_** _Provide a scoped stylesheet, types and util functionality for a web cookie banner._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/web-scoped-css 1.0.23</summary>
+
+
+**_Purpose of dependency:_** _Define a scoped stylesheet in JavaScript with performance in mind._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+<details><summary>Development dependency update @devowl-wp/webpack-config 0.2.57</summary>
+
+
+**_Purpose of dependency:_** _Webpack config builder for multiple ecosystems like standalone React frontends, Antd, Preact and WordPress._
+##### Code Refactoring
+
+* streamline tsconfig.json includes and remove unnecessary test file references across multiple backends (CU-869cb1mbz)</details>
+
+
+
+
+
+## 5.2.20 (2026-04-02) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.9.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Features
+
+* allow to create type-safe clients from any OpenAPI spec (CU-869br0bp5)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-integration 0.8.2</summary>
+
+
+**_Purpose of dependency:_** _DevOps macros, job templates and jobs for Gitlab CI and @devowl-wp/node-gitlab-ci._
+##### Maintenance
+
+* harden cli provisioning via docker binary stage and extrepo (CU-869cqreex)
+* remove unused file</details>
+
+<details><summary>Development dependency update @devowl-wp/eslint-config 0.3.0</summary>
+
+
+**_Purpose of dependency:_** _Provide eslint configuration for our complete monorepo._
+##### Features
+
+* allow to create type-safe clients from any OpenAPI spec (CU-869br0bp5)</details>
+
+<details><summary>Development dependency update @devowl-wp/node-gitlab-ci 0.8.18</summary>
+
+
+**_Purpose of dependency:_** _Create dynamic GitLab CI pipelines in JavaScript or TypeScript for each project. Reuse and inherit instructions and avoid duplicate code!_
+##### Maintenance
+
+* harden cli provisioning via docker binary stage and extrepo (CU-869cqreex)</details>
+
+
+
+
+
 ## 5.2.19 (2026-03-26)
 
 

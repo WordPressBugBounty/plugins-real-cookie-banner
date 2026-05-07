@@ -367,7 +367,7 @@ class DbConsentV2
     {
         switch ($originalType) {
             case self::REAL_QUEUE_TYPE:
-                return \__('Real Cookie Banner: Migration of consent data', RCB_TD);
+                return \__('Real Cookie Banner: Migration of consent data', 'real-cookie-banner');
             default:
                 return $label;
         }
@@ -382,7 +382,7 @@ class DbConsentV2
     {
         switch ($type) {
             case self::REAL_QUEUE_TYPE:
-                $actions[] = ['url' => \__('https://devowl.io/support/', RCB_TD), 'linkText' => \__('Contact support', RCB_TD)];
+                $actions[] = ['url' => \__('https://devowl.io/support/', 'real-cookie-banner'), 'linkText' => \__('Contact support', 'real-cookie-banner')];
                 break;
             default:
         }
@@ -399,7 +399,7 @@ class DbConsentV2
     {
         switch ($type) {
             case self::REAL_QUEUE_TYPE:
-                return \__('Real Cookie Banner v5.0 introduces an optimized database schema that allows consent documents to be stored in less storage space. The migration failed. Please try again or contact the support of Real Cookie Banner!', RCB_TD);
+                return \__('Real Cookie Banner v5.0 introduces an optimized database schema that allows consent documents to be stored in less storage space. The migration failed. Please try again or contact the support of Real Cookie Banner!', 'real-cookie-banner');
             default:
                 return $description;
         }

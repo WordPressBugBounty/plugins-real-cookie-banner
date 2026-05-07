@@ -30,7 +30,7 @@ class Utils
      */
     public static function startsWith($haystack, $needle)
     {
-        if ($haystack === null || $needle === null) {
+        if (!\is_string($haystack) || !\is_string($needle)) {
             return \false;
         }
         $length = \strlen($needle);
@@ -46,7 +46,7 @@ class Utils
      */
     public static function endsWith($haystack, $needle)
     {
-        if ($haystack === null || $needle === null) {
+        if (!\is_string($haystack) || !\is_string($needle)) {
             return \false;
         }
         $length = \strlen($needle);
@@ -330,6 +330,7 @@ class Utils
                     // Fix VueJS attributes like `v-else-if="button_type > 'woo'"></template` which causes
                     // the regular expression to fail
                     if (self::$inPregReplaceCallbackRecursive > 0 && \is_string($nodeValue) && self::endsWith($nodeValue, '></' . Utils::PARSE_HTML_ATTRIBUTES_CUSTOM_TAG . '>')) {
+                        // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal parser-retry callback, no direct HTML output.
                         throw new PregReplaceCallbackRerunException(function ($subject, $matches, $offsets) use($str) {
                             $offsetMatch = $offsets[0];
                             // Check if there is a `/>` which would break the regex, too, and we need to replace it accordingly
@@ -343,6 +344,7 @@ class Utils
                                 return \substr_replace($subject, '&gt;', $strPos, 1);
                             }
                         });
+                        // phpcs:enable
                     }
                 }
             }

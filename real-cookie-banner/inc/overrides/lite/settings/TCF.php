@@ -28,7 +28,7 @@ trait TCF
     // Documented in IOverrideTCF
     public function updateGvl($force = \false)
     {
-        return new WP_Error('rcb_update_gvl_needs_pro', \__('This functionality is only available in the PRO version.', RCB_TD), ['status' => 500]);
+        return new WP_Error('rcb_update_gvl_needs_pro', \__('This functionality is only available in the PRO version.', 'real-cookie-banner'), ['status' => 500]);
     }
     /**
      * Completely clear all database tables for GVL.

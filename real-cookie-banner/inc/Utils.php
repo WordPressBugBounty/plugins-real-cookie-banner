@@ -401,7 +401,7 @@ class Utils
      */
     public static function startsWith($haystack, $needle)
     {
-        if ($haystack === null || $needle === null) {
+        if (!\is_string($haystack) || !\is_string($needle)) {
             return \false;
         }
         $length = \strlen($needle);
@@ -416,7 +416,7 @@ class Utils
      */
     public static function endsWith($haystack, $needle)
     {
-        if ($haystack === null || $needle === null) {
+        if (!\is_string($haystack) || !\is_string($needle)) {
             return \false;
         }
         $length = \strlen($needle);
@@ -469,7 +469,12 @@ class Utils
      */
     public static function isPageBuilder()
     {
-        return isset($_GET['fl_builder']) || isset($_GET['nf_preview_form']) || isset($_GET['legacy-widget-preview']) || isset($_GET['td_action']) && $_GET['td_action'] === 'tdc_edit' || (isset($_GET['et_fb']) || isset($_GET['et_pb_preview'])) || isset($_GET['tb-preview']) || isset($_GET['fb-edit']) || isset($_GET['builder_id']) || isset($_GET['elementor-preview']) || (isset($_GET['op3editor']) || \preg_match('/\\/op-builder\\/(\\d+)/', $_SERVER['REQUEST_URI'])) || isset($_GET['us-builder']) || isset($_GET['vc_editable']) || \class_exists(MFN_Options::class) && isset($_GET['visual']) && $_GET['visual'] === 'iframe' || isset($_GET['tve']) || isset($_GET['bricks']) && $_GET['bricks'] === 'run' || isset($_GET['ct_builder']) || \function_exists('Breakdance\\isRequestFromBuilderIframe') && (isRequestFromBuilderIframe() || isRequestFromBuilderSsr()) || isset($_GET['action']) && self::startsWith($_GET['action'], 'oxy_') || isset($_POST['cs_preview_time']) || isset($_GET['action']) && $_GET['action'] === 'in-front-editor' || isset($_GET['is-editor-iframe']);
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- probe-only vendor iframe/page-builder markers (GET/POST).
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput -- isset/compare checks against third-party query keys; semantics must match vendor callbacks.
+        $result = isset($_GET['fl_builder']) || isset($_GET['nf_preview_form']) || isset($_GET['legacy-widget-preview']) || isset($_GET['td_action']) && $_GET['td_action'] === 'tdc_edit' || (isset($_GET['et_fb']) || isset($_GET['et_pb_preview'])) || isset($_GET['tb-preview']) || isset($_GET['fb-edit']) || isset($_GET['builder_id']) || isset($_GET['elementor-preview']) || (isset($_GET['op3editor']) || isset($_SERVER['REQUEST_URI']) && \preg_match('/\\/op-builder\\/(\\d+)/', \sanitize_text_field(\wp_unslash($_SERVER['REQUEST_URI'])))) || isset($_GET['us-builder']) || isset($_GET['vc_editable']) || \class_exists(MFN_Options::class) && isset($_GET['visual']) && $_GET['visual'] === 'iframe' || isset($_GET['tve']) || isset($_GET['bricks']) && $_GET['bricks'] === 'run' || isset($_GET['ct_builder']) || \function_exists('Breakdance\\isRequestFromBuilderIframe') && (isRequestFromBuilderIframe() || isRequestFromBuilderSsr()) || isset($_GET['action']) && self::startsWith($_GET['action'], 'oxy_') || isset($_POST['cs_preview_time']) || isset($_GET['action']) && $_GET['action'] === 'in-front-editor' || isset($_GET['is-editor-iframe']);
+        // phpcs:enable WordPress.Security.ValidatedSanitizedInput
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+        return $result;
     }
     /**
      * Check if current request is coming from WP CLI.
@@ -577,9 +582,14 @@ class Utils
      */
     public static function getRequestUrl()
     {
-        $requested_url = \is_ssl() ? 'https://' : 'http://';
-        $requested_url .= $_SERVER['HTTP_HOST'];
-        $requested_url .= $_SERVER['REQUEST_URI'];
-        return \esc_url_raw($requested_url);
+        if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
+            return '';
+        }
+        $scheme = \is_ssl() ? 'https://' : 'http://';
+        $host = \sanitize_text_field(\wp_unslash($_SERVER['HTTP_HOST']));
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput -- REQUEST_URI is path/query only; full URL sanitized via esc_url_raw() below.
+        $uri = \wp_unslash($_SERVER['REQUEST_URI']);
+        // phpcs:enable WordPress.Security.ValidatedSanitizedInput
+        return \esc_url_raw($scheme . $host . $uri);
     }
 }

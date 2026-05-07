@@ -112,7 +112,9 @@ class Scanner
         // Print result as HTML comment
         \printf('<!--rcb-scan:%s-->', \json_encode($scanEntries));
         // Get real-queue options so we can use this page request instead of an additional `/status` request
-        $realQueueParams = $_GET[self::QUERY_ARG_TOKEN] ?? null;
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- opaque scanner queue payload validated via UtilsUtils::isJson after decode.
+        $realQueueParams = isset($_GET[self::QUERY_ARG_TOKEN]) ? \wp_unslash($_GET[self::QUERY_ARG_TOKEN]) : null;
+        // phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         if ($realQueueParams !== null) {
             $realQueueParams = UtilsUtils::isJson(\base64_decode(\trim($realQueueParams, '-')));
             if (\is_array($realQueueParams)) {
@@ -472,7 +474,7 @@ class Scanner
     public function outputBlogId()
     {
         if (isset($_GET[self::QUERY_ARG_SITEMAP_FILTER]) && \is_user_logged_in()) {
-            $sitemapFilter = $_GET[self::QUERY_ARG_SITEMAP_FILTER];
+            $sitemapFilter = \sanitize_text_field(\wp_unslash($_GET[self::QUERY_ARG_SITEMAP_FILTER]));
             $currentBlogId = \get_current_blog_id();
             $sitemapBlogId = \is_numeric($sitemapFilter) ? \intval($sitemapFilter) : null;
             \header(\sprintf('%s: %s', self::HEADER_SITEMAP_FILTER, $currentBlogId === $sitemapBlogId ? 'true' : 'false'));
@@ -488,9 +490,9 @@ class Scanner
     {
         switch ($originalType) {
             case self::REAL_QUEUE_TYPE:
-                return \__('Real Cookie Banner: Scan of your pages', RCB_TD);
+                return \__('Real Cookie Banner: Scan of your pages', 'real-cookie-banner');
             case \DevOwl\RealCookieBanner\scanner\AutomaticScanStarter::REAL_QUEUE_TYPE:
-                return \__('Real Cookie Banner: Automatic scan of complete website', RCB_TD);
+                return \__('Real Cookie Banner: Automatic scan of complete website', 'real-cookie-banner');
             default:
                 return $label;
         }
@@ -506,9 +508,9 @@ class Scanner
         switch ($type) {
             case self::REAL_QUEUE_TYPE:
             case \DevOwl\RealCookieBanner\scanner\AutomaticScanStarter::REAL_QUEUE_TYPE:
-                $actions[] = ['url' => \__('https://devowl.io/support/', RCB_TD), 'linkText' => \__('Contact support', RCB_TD)];
-                $actions[] = ['action' => 'delete', 'linkText' => \__('Cancel scan', RCB_TD)];
-                $actions[] = ['action' => 'skip', 'linkText' => \__('Skip failed pages', RCB_TD)];
+                $actions[] = ['url' => \__('https://devowl.io/support/', 'real-cookie-banner'), 'linkText' => \__('Contact support', 'real-cookie-banner')];
+                $actions[] = ['action' => 'delete', 'linkText' => \__('Cancel scan', 'real-cookie-banner')];
+                $actions[] = ['action' => 'skip', 'linkText' => \__('Skip failed pages', 'real-cookie-banner')];
                 break;
             default:
         }
@@ -527,11 +529,11 @@ class Scanner
             case self::REAL_QUEUE_TYPE:
                 return \sprintf(
                     // translators:
-                    \_n('%1$d pages failed to be scanned.', '%1$d pages failed to be scanned.', $remaining['failure'], RCB_TD),
+                    \_n('%1$d pages failed to be scanned.', '%1$d pages failed to be scanned.', $remaining['failure'], 'real-cookie-banner'),
                     $remaining['failure']
                 );
             case \DevOwl\RealCookieBanner\scanner\AutomaticScanStarter::REAL_QUEUE_TYPE:
-                return \__('Real Cookie Banner tried to automatically scan your entire website for services and external URLs.', RCB_TD);
+                return \__('Real Cookie Banner tried to automatically scan your entire website for services and external URLs.', 'real-cookie-banner');
             default:
                 return $description;
         }

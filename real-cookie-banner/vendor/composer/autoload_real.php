@@ -34,8 +34,8 @@ class ComposerAutoloaderInit952f591b010f2bab40debe9421f04622
 
         $filesToLoad = \Composer\Autoload\ComposerStaticInit952f591b010f2bab40debe9421f04622::$files;
         $requireFile = \Closure::bind(static function ($fileIdentifier, $file) {
-            if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
-                $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
+            if (empty($GLOBALS['__composer_autoload_files_real-cookie-banner'][$fileIdentifier])) {
+                $GLOBALS['__composer_autoload_files_real-cookie-banner'][$fileIdentifier] = true;
 
                 require $file;
             }

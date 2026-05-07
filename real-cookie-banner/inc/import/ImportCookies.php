@@ -109,7 +109,7 @@ trait ImportCookies
             // Always create the entry
             $create = \wp_insert_post(['post_type' => Cookie::CPT_NAME, 'post_content' => $post_content, 'post_title' => $post_title, 'post_status' => $post_status, 'menu_order' => $order, 'meta_input' => $metas], \true);
             if (\is_wp_error($create)) {
-                $this->addMessageCreateFailure($post_title, \__('Cookie', RCB_TD), $create);
+                $this->addMessageCreateFailure($post_title, \__('Cookie', 'real-cookie-banner'), $create);
             } elseif ($this->handleCookieAssign($create, $group)) {
                 ++$order;
                 $this->mapCookies[$post_name] = \get_post($create)->ID;
@@ -144,7 +144,7 @@ trait ImportCookies
     protected function handleCorruptCookie($cookie, $index)
     {
         if (!isset($cookie['group'], $cookie['metas'], $cookie['post_name'], $cookie['post_content'], $cookie['post_status'], $cookie['post_title'])) {
-            $this->addMessageMissingProperties($index, \__('Cookie', RCB_TD), 'ID, group, metas, post_content, post_name, post_status, post_title');
+            $this->addMessageMissingProperties($index, \__('Cookie', 'real-cookie-banner'), 'ID, group, metas, post_content, post_name, post_status, post_title');
             return \false;
         }
         return \true;

@@ -13,16 +13,16 @@ trait Stats
     // Documented in IOverrideStats
     public function fetchMainStats($from, $to, $context = null)
     {
-        return new WP_Error('rest_rcb_lite', \__('You are not allowed to do this in the free version of Real Cookie Banner. Please upgrade to Real Cookie Banner PRO!', RCB_TD));
+        return new WP_Error('rest_rcb_lite', \__('You are not allowed to do this in the free version of Real Cookie Banner. Please upgrade to Real Cookie Banner PRO!', 'real-cookie-banner'));
     }
     // Documented in IOverrideStats
     public function fetchButtonsClickedStats($from, $to, $context = null)
     {
-        return new WP_Error('rest_rcb_lite', \__('You are not allowed to do this in the free version of Real Cookie Banner. Please upgrade to Real Cookie Banner PRO!', RCB_TD));
+        return new WP_Error('rest_rcb_lite', \__('You are not allowed to do this in the free version of Real Cookie Banner. Please upgrade to Real Cookie Banner PRO!', 'real-cookie-banner'));
     }
     // Documented in IOverrideStats
     public function fetchCustomBypassStats($from, $to, $context = null)
     {
-        return new WP_Error('rest_rcb_lite', \__('You are not allowed to do this in the free version of Real Cookie Banner. Please upgrade to Real Cookie Banner PRO!', RCB_TD));
+        return new WP_Error('rest_rcb_lite', \__('You are not allowed to do this in the free version of Real Cookie Banner. Please upgrade to Real Cookie Banner PRO!', 'real-cookie-banner'));
     }
 }

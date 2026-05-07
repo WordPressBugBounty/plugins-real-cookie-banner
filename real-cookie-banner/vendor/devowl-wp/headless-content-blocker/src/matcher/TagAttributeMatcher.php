@@ -52,6 +52,7 @@ class TagAttributeMatcher extends AbstractMatcher
             $match->setAfterTag($match->getLink() . $match->getAfterTag());
             $match->setAttribute($linkAttribute, null);
             $mimeType = $match->isAttributeDataUrl($linkAttribute);
+            // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal parser rerun flow, no direct output rendering.
             throw new RerunOnMatchException($match, function ($match, $matcher) use($linkAttribute, $mimeType) {
                 if ($match instanceof ScriptInlineMatch) {
                     if ($match->hasAttribute(Constants::HTML_ATTRIBUTE_INLINE)) {
@@ -66,6 +67,7 @@ class TagAttributeMatcher extends AbstractMatcher
                     throw new RerunOnMatchException($match);
                 }
             });
+            // phpcs:enable
         }
         $this->iterateBlockablesInString(
             $result,

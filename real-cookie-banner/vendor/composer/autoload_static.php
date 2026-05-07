@@ -120,7 +120,7 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
     );
 
     public static $classMap = array (
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'DevOwl\\RealCookieBanner\\Activator' => __DIR__ . '/../..' . '/inc/Activator.php',
         'DevOwl\\RealCookieBanner\\AdInitiator' => __DIR__ . '/../..' . '/inc/AdInitiator.php',
         'DevOwl\\RealCookieBanner\\Assets' => __DIR__ . '/../..' . '/inc/Assets.php',
@@ -347,7 +347,6 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\client\\TelemetryData' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/client/TelemetryData.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\License' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/license/License.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\LicenseActivation' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/license/LicenseActivation.php',
-        'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\PluginUpdateChecker' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/license/PluginUpdateChecker.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\PluginUpdateLicensePool' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/license/PluginUpdateLicensePool.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\license\\TelemetryData' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/license/TelemetryData.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\RealProductManagerWpClient\\rest\\Announcement' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/rest/Announcement.php',

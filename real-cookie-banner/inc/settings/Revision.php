@@ -153,7 +153,7 @@ class Revision extends AbstractRevisionPersistance
          */
         $translated = \apply_filters('RCB/Revision/Context/Translate', $context);
         if (empty($translated)) {
-            $translated = \__('Without context', RCB_TD);
+            $translated = \__('Without context', 'real-cookie-banner');
         }
         return $translated;
     }

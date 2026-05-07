@@ -141,6 +141,9 @@ class General extends AbstractGeneral implements IOverrideGeneral
     // Documented in AbstractGeneral
     public function getBlocker()
     {
+        if (!Core::getInstance()->getBlocker()->isEnabled()) {
+            return [];
+        }
         return \array_map(function ($data) {
             return ServicesBlocker::fromJson($data);
         }, \DevOwl\RealCookieBanner\settings\Blocker::getInstance()->toJson());

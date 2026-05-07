@@ -103,7 +103,7 @@ class Templates
                 return new WP_Error('rcb_template_cache_pending', 'We requested the service cloud to download templates and allowed async cache calculation, which is still pending.', ['status' => 503]);
             } else {
                 // Throw error that the service cloud is not reachable
-                return new WP_Error('rcb_template_service_cloud_not_reachable', \__('The Service Cloud is currently not reachable, we will try to download the templates again in a few minutes automatically...', RCB_TD));
+                return new WP_Error('rcb_template_service_cloud_not_reachable', \__('The Service Cloud is currently not reachable, we will try to download the templates again in a few minutes automatically...', 'real-cookie-banner'));
             }
         }
         return new WP_REST_Response(['items' => $items]);

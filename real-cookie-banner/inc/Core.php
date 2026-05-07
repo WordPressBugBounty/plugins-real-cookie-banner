@@ -302,6 +302,7 @@ class Core extends BaseCore implements IOverrideCore
         \add_action('shutdown', function () {
             // [Theme Comp] Themify
             if (\has_action('shutdown', ['TFCache', 'tf_cache_end']) !== \false) {
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Themify buffer merge returns filtered HTML document body.
                 echo $this->getBlocker()->replace(\ob_get_clean());
             }
         }, 0);
@@ -338,7 +339,7 @@ class Core extends BaseCore implements IOverrideCore
         if (!$isLicensed) {
             $args['aid'] = null;
         }
-        $translatedUrl = \__('https://devowl.io/go/real-cookie-banner?source=rcb-lite', RCB_TD);
+        $translatedUrl = \__('https://devowl.io/go/real-cookie-banner?source=rcb-lite', 'real-cookie-banner');
         $translatedUrl = \add_query_arg($args, $translatedUrl);
         \define('RCB_PRO_VERSION', $translatedUrl);
     }
@@ -515,8 +516,10 @@ class Core extends BaseCore implements IOverrideCore
         // Allow to reset all available data and recreated
         if (isset($_GET['rcb-reset-texts']) && \current_user_can(self::MANAGE_MIN_CAPABILITY)) {
             \check_admin_referer('rcb-reset-texts');
-            $resetLang = $_GET['reset-lang'] ?? [];
-            Reset::getInstance()->texts(\is_array($resetLang) ? $resetLang : null);
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce-verified admin reset; languages sanitized before persist.
+            $resetLangRaw = isset($_GET['reset-lang']) ? \wp_unslash($_GET['reset-lang']) : [];
+            $resetLang = \is_array($resetLangRaw) ? \array_map('sanitize_text_field', $resetLangRaw) : null;
+            Reset::getInstance()->texts($resetLang);
             \wp_safe_redirect($this->getConfigPage()->getUrl());
             exit;
         }
