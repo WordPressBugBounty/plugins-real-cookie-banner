@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.2.23 (2026-05-13)
+
+
+### Bug Fixes
+
+* enhance settings registration with sanitization callbacks for improved data validation (CU-869d454p5)
+
+
+<details><summary>Dependency updates @devowl-wp/multilingual 1.14.22</summary>
+
+
+**_Purpose of dependency:_** _Provide helper functionality for multilingual plugins like WPML and PolyLang_
+##### Bug Fixes
+
+* enhance settings registration with sanitization callbacks for improved data validation (CU-869d454p5)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-integration 0.9.0</summary>
+
+
+**_Purpose of dependency:_** _DevOps macros, job templates and jobs for Gitlab CI and @devowl-wp/node-gitlab-ci._
+##### Code Refactoring
+
+* docker-compose network governance for devowl-wp stacks, enhancing service exposure and internal network management (CU-869c51h34)
+
+
+##### Continuous Integration
+
+* add endpoint wait functionality for SeaweedFS services readiness (CU-869c7xrrv)
+* every docker review deploy gets a dedicated docker stack name coupled to the Gitlab CI job id (CU-869d915w8)
+
+
+##### Features
+
+* enforce package-tier import boundaries via dependency-cruiser (CU-869d0qyx8)</details>
+
+<details><summary>Development dependency update @devowl-wp/node-gitlab-ci 0.8.20</summary>
+
+
+**_Purpose of dependency:_** _Create dynamic GitLab CI pipelines in JavaScript or TypeScript for each project. Reuse and inherit instructions and avoid duplicate code!_
+##### Continuous Integration
+
+* every docker review deploy gets a dedicated docker stack name coupled to the Gitlab CI job id (CU-869d915w8)</details>
+
+
+
+
+
 ## 5.2.22 (2026-05-07)
 
 

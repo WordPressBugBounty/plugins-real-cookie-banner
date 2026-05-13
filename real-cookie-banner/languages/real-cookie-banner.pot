@@ -1654,17 +1654,17 @@ msgstr ""
 msgid "Consent Forwarding is not active."
 msgstr ""
 
-#: inc/overrides/pro/settings/Affiliate.php:117
+#: inc/overrides/pro/settings/Affiliate.php:119
 msgid "The link to Real Cookie Banner is an affiliate link. If you buy the product, we may receive a commission, but the price of the product will not change for you."
 msgstr ""
 
-#: inc/overrides/pro/settings/CountryBypass.php:149
-#: inc/overrides/pro/settings/TCF.php:148
+#: inc/overrides/pro/settings/CountryBypass.php:156
+#: inc/overrides/pro/settings/TCF.php:153
 msgid "This functionality is currently not available."
 msgstr ""
 
 #. translators:
-#: inc/overrides/pro/settings/TCF.php:121
+#: inc/overrides/pro/settings/TCF.php:126
 #, php-format
 msgid "Downloading the GVL has failed. Please try again later! (%1$s: %2$s)"
 msgstr ""
@@ -4280,27 +4280,27 @@ msgstr ""
 
 #: inc/view/customize/banner/Texts.php:577
 #: inc/view/navmenu/NavMenuLinks.php:114
-#: inc/view/navmenu/NavMenuLinks.php:116
+#: inc/view/navmenu/NavMenuLinks.php:127
 msgctxt "legal-text"
 msgid "Change privacy settings"
 msgstr ""
 
 #: inc/view/customize/banner/Texts.php:578
-#: inc/view/navmenu/NavMenuLinks.php:120
-#: inc/view/navmenu/NavMenuLinks.php:122
+#: inc/view/navmenu/NavMenuLinks.php:115
+#: inc/view/navmenu/NavMenuLinks.php:131
 msgctxt "legal-text"
 msgid "Privacy settings history"
 msgstr ""
 
 #: inc/view/customize/banner/Texts.php:579
-#: inc/view/navmenu/NavMenuLinks.php:126
-#: inc/view/navmenu/NavMenuLinks.php:128
+#: inc/view/navmenu/NavMenuLinks.php:116
+#: inc/view/navmenu/NavMenuLinks.php:135
 msgctxt "legal-text"
 msgid "Revoke consents"
 msgstr ""
 
 #: inc/view/customize/banner/Texts.php:580
-#: inc/view/navmenu/NavMenuLinks.php:132
+#: inc/view/navmenu/NavMenuLinks.php:117
 msgctxt "legal-text"
 msgid "You have successfully revoked consent for services with its cookies and personal data processing. The page will be reloaded now!"
 msgstr ""
@@ -4333,11 +4333,11 @@ msgstr ""
 msgid "The navigation menu could not be found."
 msgstr ""
 
-#: inc/view/navmenu/NavMenuLinks.php:193
+#: inc/view/navmenu/NavMenuLinks.php:195
 msgid "Success message"
 msgstr ""
 
-#: inc/view/navmenu/NavMenuLinks.php:337
+#: inc/view/navmenu/NavMenuLinks.php:339
 msgid "Add to Menu"
 msgstr ""
 

@@ -468,7 +468,7 @@ abstract class AbstractLanguagePlugin
      * referer is an admin page and behaves differently.
      *
      * @param string $locale
-     * @param callable $callback Arguments: $locale, $currentLanguage
+     * @param callable $callback Arguments: $locale, $currentLanguage, $temporaryTextDomain
      */
     public function switchToLanguage($locale, $callback)
     {
@@ -477,7 +477,7 @@ abstract class AbstractLanguagePlugin
         $this->localesBeforeSwitch[] = $currentLanguage;
         $teardownTd = $this->createTemporaryTextDomain($locale);
         $this->switch($locale);
-        $result = \call_user_func($callback, $locale, $currentLanguage);
+        $result = \call_user_func($callback, $locale, $currentLanguage, $this->temporaryTextDomain);
         // Restore to previous
         if ($teardownTd) {
             $this->teardownTemporaryTextDomain();

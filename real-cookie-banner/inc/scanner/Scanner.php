@@ -110,7 +110,7 @@ class Scanner
             $this->doActionAddedRemoved($scanEntries, $beforeTemplates, $beforeExternalHosts, $afterTemplates, $afterExternalHosts);
         }
         // Print result as HTML comment
-        \printf('<!--rcb-scan:%s-->', \json_encode($scanEntries));
+        \printf('<!--rcb-scan:%s-->', \wp_json_encode($scanEntries));
         // Get real-queue options so we can use this page request instead of an additional `/status` request
         // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- opaque scanner queue payload validated via UtilsUtils::isJson after decode.
         $realQueueParams = isset($_GET[self::QUERY_ARG_TOKEN]) ? \wp_unslash($_GET[self::QUERY_ARG_TOKEN]) : null;
@@ -119,7 +119,7 @@ class Scanner
             $realQueueParams = UtilsUtils::isJson(\base64_decode(\trim($realQueueParams, '-')));
             if (\is_array($realQueueParams)) {
                 \printf('
-    <!--real-queue-status:%s-->', \json_encode(Core::getInstance()->getRealQueue()->getRestQuery()->buildStatus($realQueueParams)));
+    <!--real-queue-status:%s-->', \wp_json_encode(Core::getInstance()->getRealQueue()->getRestQuery()->buildStatus($realQueueParams)));
             }
         }
         // Mark Job as succeed

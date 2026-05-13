@@ -94,35 +94,19 @@ class NavMenuLinks
         }
         $td = Hooks::getInstance()->createTemporaryTextDomain();
         $result = [];
-        $fnCalculateResult = function ($domain) use(&$result) {
-            $result = ['#consent-change' => [
-                'label' => \_x('Change privacy settings', 'legal-text', 'real-cookie-banner'),
-                // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
-                'linkText' => \_x('Change privacy settings', 'legal-text', $domain),
-            ], '#consent-history' => [
-                'label' => \_x('Privacy settings history', 'legal-text', 'real-cookie-banner'),
-                // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
-                'linkText' => \_x('Privacy settings history', 'legal-text', $domain),
-            ], '#consent-revoke' => [
-                'label' => \_x('Revoke consents', 'legal-text', 'real-cookie-banner'),
-                // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
-                'linkText' => \_x('Revoke consents', 'legal-text', $domain),
-                // phpcs:enable
-                'meta' => [
-                    // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain -- temporary text domain is required for language-specific legal text rendering.
-                    self::META_SUCCESS_MESSAGE_META_NAME => \_x('You have successfully revoked consent for services with its cookies and personal data processing. The page will be reloaded now!', 'legal-text', $domain),
-                ],
-            ]];
+        $fnCalculateResult = function ($temporaryTextDomain) use(&$result) {
+            $targetLanguageTexts = $temporaryTextDomain->translate(function () {
+                return [\_x('Change privacy settings', 'legal-text', 'real-cookie-banner'), \_x('Privacy settings history', 'legal-text', 'real-cookie-banner'), \_x('Revoke consents', 'legal-text', 'real-cookie-banner'), \_x('You have successfully revoked consent for services with its cookies and personal data processing. The page will be reloaded now!', 'legal-text', 'real-cookie-banner')];
+            });
+            $result = ['#consent-change' => ['label' => \_x('Change privacy settings', 'legal-text', 'real-cookie-banner'), 'linkText' => $targetLanguageTexts[0]], '#consent-history' => ['label' => \_x('Privacy settings history', 'legal-text', 'real-cookie-banner'), 'linkText' => $targetLanguageTexts[1]], '#consent-revoke' => ['label' => \_x('Revoke consents', 'legal-text', 'real-cookie-banner'), 'linkText' => $targetLanguageTexts[2], 'meta' => [self::META_SUCCESS_MESSAGE_META_NAME => $targetLanguageTexts[3]]]];
         };
         if ($language !== null) {
             $compLanguage = Core::getInstance()->getCompLanguage();
-            $compLanguage->switchToLanguage($language, function () use($compLanguage, $fnCalculateResult) {
-                $fnCalculateResult($compLanguage->getTemporaryTextDomainName());
+            $compLanguage->switchToLanguage($language, function ($locale, $currentLanguage, $temporaryTextDomain) use($fnCalculateResult, $td) {
+                $fnCalculateResult($temporaryTextDomain ?? $td);
             });
         } else {
-            $td->translate(function () use($fnCalculateResult) {
-                $fnCalculateResult('real-cookie-banner');
-            });
+            $fnCalculateResult($td);
         }
         $td->teardown();
         return $result;
