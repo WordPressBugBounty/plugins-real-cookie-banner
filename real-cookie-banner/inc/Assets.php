@@ -226,7 +226,7 @@ class Assets
         }
         // animate.css (only when animations are enabled)
         $customize = \DevOwl\RealCookieBanner\Core::getInstance()->getBanner()->getCustomize();
-        $hasAnimations = $customize->getSetting(BasicLayout::SETTING_ANIMATION_IN) !== 'none' || $customize->getSetting(BasicLayout::SETTING_ANIMATION_OUT) !== 'none' || $customize->getSetting(StickyLinks::SETTING_ENABLED);
+        $hasAnimations = $customize->getSetting(BasicLayout::SETTING_ANIMATION_IN) !== 'none' || $customize->getSetting(BasicLayout::SETTING_ANIMATION_OUT) !== 'none' || $customize->getSetting(StickyLinks::SETTING_ENABLED) && $customize->getSetting(StickyLinks::SETTING_ANIMATIONS_ENABLED);
         if (\is_customize_preview() || $hasAnimations) {
             $handleAnimateCss = $this->enqueueLibraryStyle('animate-css', [[$useNonMinifiedSources, 'animate.css/animate.css'], 'animate.css/animate.min.css']);
             $excludeAssets->byHandle('css', $handleAnimateCss);
@@ -242,7 +242,7 @@ class Assets
             // Only enable the advanced enqueue when we are not relying on `react-dom` as this could lead to issues with
             // e.g. WP Fastest Cache which moves `react-dom` to the body footer -> "Undefined variable ReactDOM" error.
             if (!\is_customize_preview()) {
-                $this->enableAdvancedEnqueue($preloadJs, $advancedFeatures, 'script', ['banner-ui', 'banner-lazy', 'banner-common-async', 'vendor-banner-common-async']);
+                $this->enableAdvancedEnqueue($preloadJs, $advancedFeatures, 'script', $this->getBannerJavaScriptChunkPreloadNames());
                 $this->enableAdvancedEnqueue($preloadCss, $advancedFeatures, 'style');
             }
             $excludeAssets->byHandle('js', $preloadJs);
@@ -252,6 +252,29 @@ class Assets
         \wp_add_inline_script($handle, '((a,b)=>{a[b]||(a[b]={unblockSync:()=>undefined},["consentSync"].forEach(c=>a[b][c]=()=>({cookie:null,consentGiven:!1,cookieOptIn:!0})),["consent","consentAll","unblock"].forEach(c=>a[b][c]=(...d)=>new Promise(e=>a.addEventListener(b,()=>{a[b][c](...d).then(e)},{once:!0}))))})(window,"consentApi");', 'before');
         $this->handleBanner = $handle;
         return $handle;
+    }
+    /**
+     * Webpack chunk names for `<link rel="preload">` hints. Omitted in banner-less mode when the cookie
+     * banner UI is not shown on the current page (avoids unused-preload console warnings).
+     *
+     * @return string[]
+     */
+    private function getBannerJavaScriptChunkPreloadNames()
+    {
+        $defaultChunks = ['banner-ui', 'banner-lazy', 'banner-common-async', 'vendor-banner-common-async'];
+        $consent = Consent::getInstance();
+        if (!$consent->isBannerLessConsent() || \is_customize_preview()) {
+            return $defaultChunks;
+        }
+        $showOnPageIds = $consent->getBannerLessConsentShowOnPageIds();
+        if (\count($showOnPageIds) === 0) {
+            return [];
+        }
+        $pageId = \get_queried_object_id();
+        if ($pageId > 0 && \in_array($pageId, $showOnPageIds, \true)) {
+            return $defaultChunks;
+        }
+        return [];
     }
     /**
      * Enqueue the blocker.

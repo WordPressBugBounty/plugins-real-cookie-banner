@@ -325,6 +325,7 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\None' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/None.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\PolyLang' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/PolyLang.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\Sync' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/Sync.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\SyncFromExternalSourceTrait' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/SyncFromExternalSourceTrait.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\TemporaryTextDomain' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/TemporaryTextDomain.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\TranslatePress' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/TranslatePress.php',
         'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\Utils' => __DIR__ . '/..' . '/devowl-wp/multilingual/src/Utils.php',

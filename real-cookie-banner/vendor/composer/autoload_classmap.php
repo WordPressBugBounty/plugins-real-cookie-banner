@@ -211,6 +211,7 @@ return array(
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\None' => $vendorDir . '/devowl-wp/multilingual/src/None.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\PolyLang' => $vendorDir . '/devowl-wp/multilingual/src/PolyLang.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\Sync' => $vendorDir . '/devowl-wp/multilingual/src/Sync.php',
+    'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\SyncFromExternalSourceTrait' => $vendorDir . '/devowl-wp/multilingual/src/SyncFromExternalSourceTrait.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\TemporaryTextDomain' => $vendorDir . '/devowl-wp/multilingual/src/TemporaryTextDomain.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\TranslatePress' => $vendorDir . '/devowl-wp/multilingual/src/TranslatePress.php',
     'DevOwl\\RealCookieBanner\\Vendor\\DevOwl\\Multilingual\\Utils' => $vendorDir . '/devowl-wp/multilingual/src/Utils.php',

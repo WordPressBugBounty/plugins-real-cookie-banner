@@ -3,6 +3,108 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.2.25 (2026-05-27)
+
+
+### Bug Fixes
+
+* improved compatibility with WPML and improve sync mechanism (CU-869dcwgyf)
+* load animate.css only when banner and sticky legal links animations enabled (CU-869db3ud2)
+* skip unused banner chunk preloads in banner-less mode (CU-869db5q78)
+
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.11</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Bug Fixes
+
+* compatibility with Payment Plugins for Stripe WooCommerce</details>
+
+<details><summary>Dependency updates @devowl-wp/multilingual 1.14.24</summary>
+
+
+**_Purpose of dependency:_** _Provide helper functionality for multilingual plugins like WPML and PolyLang_
+##### Bug Fixes
+
+* improved compatibility with WPML and improve sync mechanism (CU-869dcwgyf)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner 1.1.36</summary>
+
+
+**_Purpose of dependency:_** _Provide UI for a cookie banner and content blocker for multiple services._
+##### Bug Fixes
+
+* load animate.css only when banner and sticky legal links animations enabled (CU-869db3ud2)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-utils 1.14.24</summary>
+
+
+**_Purpose of dependency:_** _Create cross-selling ads, about page, rating and newsletter input for WP Real plugins._
+##### Bug Fixes
+
+* images not shown in Welcome page for Real Cookie Banner PRO (CU-869dewjvn)</details>
+
+<details><summary>Dependency updates @devowl-wp/service-cloud-consumer 1.0.44</summary>
+
+
+**_Purpose of dependency:_** _Consume service and blocker templates from service cloud_
+##### Bug Fixes
+
+* improved compatibility with WPML and improve sync mechanism (CU-869dcwgyf)</details>
+
+<details><summary>Development dependency update @devowl-wp/web-cookie-banner 1.0.29</summary>
+
+
+**_Purpose of dependency:_** _Provide a scoped stylesheet, types and util functionality for a web cookie banner._
+##### Bug Fixes
+
+* prevent headline font weight inheritance in cookie banner description (CU-869dewkyb)</details>
+
+
+
+
+
+## 5.2.24 (2026-05-20) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.10.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Features
+
+* redesign cart-abandonment email and ship opt-out flow (CU-869cmgnej)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-integration 0.9.1</summary>
+
+
+**_Purpose of dependency:_** _DevOps macros, job templates and jobs for Gitlab CI and @devowl-wp/node-gitlab-ci._
+##### Code Refactoring
+
+* migrate retypeapp to rspress (CU-869dcazu8)
+
+
+##### Continuous Integration
+
+* inject devowl-io-production-design-apply bundle into review-app wordpress container via S3 ensure-bundle + docker cp (CU-869ckvgg2)</details>
+
+<details><summary>Development dependency update @devowl-wp/monorepo-utils 0.2.29</summary>
+
+
+**_Purpose of dependency:_** _Predefined monorepo utilities and tasks._
+##### Code Refactoring
+
+* migrate retypeapp to rspress (CU-869dcazu8)</details>
+
+
+
+
+
 ## 5.2.23 (2026-05-13)
 
 

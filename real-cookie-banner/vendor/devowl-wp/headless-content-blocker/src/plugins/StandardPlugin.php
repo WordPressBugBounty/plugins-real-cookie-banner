@@ -257,6 +257,8 @@ class StandardPlugin extends AbstractPlugin
             '/window\\.wteL10n/m',
             // [Plugin Comp] Bold Themes Page Builder
             '/window\\.bt_bb_fe_elements/m',
+            // [Plugin Comp] Payment Plugins for Stripe WooCommerce
+            'wc_stripe_credit_card_params',
         ]);
         /**
          * DoNotBlockScriptTextTemplates.
