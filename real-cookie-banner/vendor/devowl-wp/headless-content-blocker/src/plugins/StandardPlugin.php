@@ -259,6 +259,8 @@ class StandardPlugin extends AbstractPlugin
             '/window\\.bt_bb_fe_elements/m',
             // [Plugin Comp] Payment Plugins for Stripe WooCommerce
             'wc_stripe_credit_card_params',
+            // [Plugin Comp] Pixfort
+            '/var PIX_JS_OPTIONS/m',
         ]);
         /**
          * DoNotBlockScriptTextTemplates.
@@ -334,6 +336,8 @@ class StandardPlugin extends AbstractPlugin
         $scriptInlineJsonBlocker = $cb->addPlugin(ScriptInlineJsonBlocker::class);
         $scriptInlineJsonBlocker->addSchema('wp.i18n.setLocaleData', '/(wp\\.i18n\\.setLocaleData\\(\\s*localeData,\\s*domain\\s*\\);\\s*}\\s*\\)\\s*\\(\\s*"[^"]+",\\s*)(.*)(\\)\\s*;\\s*<\\/script>)/m', '</script>');
         $scriptInlineJsonBlocker->addSchema('jetMenuMobileWidgetRenderData', '/(window\\.jetMenuMobileWidgetRenderData[^=]+=)(.*)(;)$/m');
+        // [Plugin Comp] https://wordpress.org/plugins/responsive-menu/
+        $scriptInlineJsonBlocker->addSchema('rmp_menu', '/(var\\s*rmp_menu[^=]+=)(.*)(;)$/m');
         // [Plugin Comp] https://wordpress.org/plugins/ays-chatgpt-assistant/
         $scriptInlineJsonBlocker->addSchema('AysChatGPTChatSettings', '/(var\\s*AysChatGPTChatSettings[^=]+=)(.*)(;)$/ms');
         // [Plugin Comp] WP Travel Engine

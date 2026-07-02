@@ -838,6 +838,7 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
         'DevOwl\\RealCookieBanner\\templates\\StorageHelper' => __DIR__ . '/../..' . '/inc/templates/StorageHelper.php',
         'DevOwl\\RealCookieBanner\\templates\\TemplateConsumers' => __DIR__ . '/../..' . '/inc/templates/TemplateConsumers.php',
         'DevOwl\\RealCookieBanner\\templates\\TranslationsMiddlewareImpl' => __DIR__ . '/../..' . '/inc/templates/TranslationsMiddlewareImpl.php',
+        'DevOwl\\RealCookieBanner\\view\\AnimateCss' => __DIR__ . '/../..' . '/inc/view/AnimateCss.php',
         'DevOwl\\RealCookieBanner\\view\\Banner' => __DIR__ . '/../..' . '/inc/view/Banner.php',
         'DevOwl\\RealCookieBanner\\view\\BannerCustomize' => __DIR__ . '/../..' . '/inc/view/BannerCustomize.php',
         'DevOwl\\RealCookieBanner\\view\\Blocker' => __DIR__ . '/../..' . '/inc/view/Blocker.php',

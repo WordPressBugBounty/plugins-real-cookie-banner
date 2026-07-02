@@ -149,12 +149,12 @@ abstract class ServiceCloudConsumerExternalUrlNotifierMiddleware extends Abstrac
         }
     }
     // Documented in AbstractConsumerMiddleware
-    public function beforeUseTemplate($template)
+    public function beforeUseTemplates(&$templates)
     {
         // Silence is golden.
     }
     // Documented in AbstractConsumerMiddleware
-    public function afterUseTemplate($template)
+    public function afterUseTemplates(&$templates)
     {
         // Silence is golden.
     }

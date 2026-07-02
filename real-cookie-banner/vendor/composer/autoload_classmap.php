@@ -724,6 +724,7 @@ return array(
     'DevOwl\\RealCookieBanner\\templates\\StorageHelper' => $baseDir . '/inc/templates/StorageHelper.php',
     'DevOwl\\RealCookieBanner\\templates\\TemplateConsumers' => $baseDir . '/inc/templates/TemplateConsumers.php',
     'DevOwl\\RealCookieBanner\\templates\\TranslationsMiddlewareImpl' => $baseDir . '/inc/templates/TranslationsMiddlewareImpl.php',
+    'DevOwl\\RealCookieBanner\\view\\AnimateCss' => $baseDir . '/inc/view/AnimateCss.php',
     'DevOwl\\RealCookieBanner\\view\\Banner' => $baseDir . '/inc/view/Banner.php',
     'DevOwl\\RealCookieBanner\\view\\BannerCustomize' => $baseDir . '/inc/view/BannerCustomize.php',
     'DevOwl\\RealCookieBanner\\view\\Blocker' => $baseDir . '/inc/view/Blocker.php',

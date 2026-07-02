@@ -14,13 +14,11 @@ use DevOwl\RealCookieBanner\settings\CookieGroup;
 use DevOwl\RealCookieBanner\settings\CountryBypass;
 use DevOwl\RealCookieBanner\settings\Revision;
 use DevOwl\RealCookieBanner\settings\General;
-use DevOwl\RealCookieBanner\settings\Reset;
 use DevOwl\RealCookieBanner\view\Blocker;
 use DevOwl\RealCookieBanner\settings\TCF;
 use DevOwl\RealCookieBanner\view\Banner;
-use DevOwl\RealCookieBanner\view\customize\banner\BasicLayout;
+use DevOwl\RealCookieBanner\view\AnimateCss;
 use DevOwl\RealCookieBanner\view\customize\banner\CustomCss;
-use DevOwl\RealCookieBanner\view\customize\banner\StickyLinks;
 use DevOwl\RealCookieBanner\view\customize\banner\Texts;
 use DevOwl\RealCookieBanner\Vendor\DevOwl\RealProductManagerWpClient\Core as RpmWpClientCore;
 use DevOwl\RealCookieBanner\Vendor\DevOwl\RealProductManagerWpClient\license\License;
@@ -226,14 +224,16 @@ class Assets
         }
         // animate.css (only when animations are enabled)
         $customize = \DevOwl\RealCookieBanner\Core::getInstance()->getBanner()->getCustomize();
-        $hasAnimations = $customize->getSetting(BasicLayout::SETTING_ANIMATION_IN) !== 'none' || $customize->getSetting(BasicLayout::SETTING_ANIMATION_OUT) !== 'none' || $customize->getSetting(StickyLinks::SETTING_ENABLED) && $customize->getSetting(StickyLinks::SETTING_ANIMATIONS_ENABLED);
-        if (\is_customize_preview() || $hasAnimations) {
+        $animateCss = new AnimateCss($customize);
+        $hasAnimations = $animateCss->hasConfiguredAnimations();
+        $useClientAnimateCss = $hasAnimations && !\is_customize_preview() && $animateCss->canInlineSubset();
+        if ((\is_customize_preview() || $hasAnimations) && !$useClientAnimateCss) {
             $handleAnimateCss = $this->enqueueLibraryStyle('animate-css', [[$useNonMinifiedSources, 'animate.css/animate.css'], 'animate.css/animate.min.css']);
             $excludeAssets->byHandle('css', $handleAnimateCss);
         }
         if ($handle !== \false) {
             $preloadJs = ['iabtcf-stub', $handle];
-            $preloadCss = ['animate-css'];
+            $preloadCss = $useClientAnimateCss ? [] : ['animate-css'];
             $advancedFeatures = [Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_PRIORITY_QUEUE];
             if (!$excludeAssets->hasFailureSupportPluginActive()) {
                 $advancedFeatures[] = Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER;
@@ -349,9 +349,7 @@ class Assets
                 // our graphs and charts we need at least 4
                 $colorScheme[] = $colorScheme[0];
             }
-            $dryResetTexts = [];
-            Reset::getInstance()->texts(null, $dryResetTexts);
-            $result = ['installationDateIso' => \mysql2date('c', \get_option(\DevOwl\RealCookieBanner\Activator::OPTION_NAME_INSTALLATION_DATE, \time())), 'showLicenseFormImmediate' => $showLicenseFormImmediate, 'showNoticeAnonymousScriptNotWritable' => $anonymousAssetBuilder->getContentDir() === \false, 'assetsUrl' => $core->getAdInitiator()->getAssetsUrl(), 'customizeValuesBanner' => $bannerCustomize->localizeValues()['customizeValuesBanner'], 'customizeBannerUrl' => $bannerCustomize->getUrl(), 'adminUrl' => \admin_url(), 'colorScheme' => $colorScheme, 'cachePlugins' => CacheInvalidator::getInstance()->getLabels(), 'modalHints' => $notices->getClickedModalHints(), 'isDemoEnv' => \DevOwl\RealCookieBanner\DemoEnvironment::getInstance()->isDemoEnv(), 'isConfigProNoticeVisible' => $notices->isConfigProNoticeVisible(), 'activePlugins' => UtilsUtils::getActivePluginsMap(), 'ageNoticeCountryAgeMap' => Consent::AGE_NOTICE_COUNTRY_AGE_MAP, 'predefinedCountryBypassLists' => CountryBypass::PREDEFINED_COUNTRY_LISTS, 'defaultCookieGroupTexts' => CookieGroup::getInstance()->getDefaultDescriptions(\true), 'useEncodedStringForScriptInputs' => \version_compare($wp_version, '5.4.0', '>='), 'resetUrl' => \add_query_arg(['_wpnonce' => \wp_create_nonce('rcb-reset-all'), 'rcb-reset-all' => 1], $core->getConfigPage()->getUrl()), 'resetTexts' => ['url' => \add_query_arg(['_wpnonce' => \wp_create_nonce('rcb-reset-texts'), 'rcb-reset-texts' => 1], $core->getConfigPage()->getUrl()), 'dry' => $dryResetTexts], 'capabilities' => ['activate_plugins' => \current_user_can('activate_plugins')]];
+            $result = ['installationDateIso' => \mysql2date('c', \get_option(\DevOwl\RealCookieBanner\Activator::OPTION_NAME_INSTALLATION_DATE, \time())), 'showLicenseFormImmediate' => $showLicenseFormImmediate, 'showNoticeAnonymousScriptNotWritable' => $anonymousAssetBuilder->getContentDir() === \false, 'assetsUrl' => $core->getAdInitiator()->getAssetsUrl(), 'customizeValuesBanner' => $bannerCustomize->localizeValues()['customizeValuesBanner'], 'customizeBannerUrl' => $bannerCustomize->getUrl(), 'adminUrl' => \admin_url(), 'colorScheme' => $colorScheme, 'cachePlugins' => CacheInvalidator::getInstance()->getLabels(), 'modalHints' => $notices->getClickedModalHints(), 'isDemoEnv' => \DevOwl\RealCookieBanner\DemoEnvironment::getInstance()->isDemoEnv(), 'isConfigProNoticeVisible' => $notices->isConfigProNoticeVisible(), 'activePlugins' => UtilsUtils::getActivePluginsMap(), 'ageNoticeCountryAgeMap' => Consent::AGE_NOTICE_COUNTRY_AGE_MAP, 'predefinedCountryBypassLists' => CountryBypass::PREDEFINED_COUNTRY_LISTS, 'defaultCookieGroupTexts' => CookieGroup::getInstance()->getDefaultDescriptions(\true), 'useEncodedStringForScriptInputs' => \version_compare($wp_version, '5.4.0', '>='), 'resetUrl' => \add_query_arg(['_wpnonce' => \wp_create_nonce('rcb-reset-all'), 'rcb-reset-all' => 1], $core->getConfigPage()->getUrl()), 'resetTexts' => ['url' => \add_query_arg(['_wpnonce' => \wp_create_nonce('rcb-reset-texts'), 'rcb-reset-texts' => 1], $core->getConfigPage()->getUrl())], 'capabilities' => ['activate_plugins' => \current_user_can('activate_plugins')]];
         } elseif (\is_customize_preview()) {
             $result = \array_merge($bannerCustomize->localizeIds(), $bannerCustomize->localizeValues(), $bannerCustomize->localizeDefaultValues(), ['poweredByTexts' => $core->getCompLanguage()->translateArray(Texts::getPoweredByLinkTexts()), 'isPoweredByLinkDisabledByException' => $bannerCustomize->isPoweredByLinkDisabledByException()]);
             $frontendJson['lazyLoadedDataForSecondView'] = $lazyLoadedData;
@@ -360,6 +358,10 @@ class Assets
             $bannerCustomize->expandLocalizeValues($result);
             // We do not need this in frontend as the cookie policy is server-side rendered
             unset($result['customizeValuesBanner']['cookiePolicy']);
+            $animateCss = new AnimateCss($bannerCustomize);
+            if ($animateCss->hasConfiguredAnimations() && $animateCss->canInlineSubset()) {
+                $result['animateCss'] = $animateCss->buildInlineCss();
+            }
         }
         if (\in_array($context, [Constants::ASSETS_TYPE_ADMIN, Constants::ASSETS_TYPE_CUSTOMIZE], \true)) {
             /**

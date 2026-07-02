@@ -3,6 +3,132 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.2.28 (2026-07-02)
+
+
+### Bug Fixes
+
+* compatibility with Formidable Forms Pro not showing any scan results (CU-869ddgdmv)
+* prevent visual content blocker width collapse in flex-start flex parents (CU-869dpd79k)
+
+
+### Performance Improvements
+
+* implement animate.css subset for client-side injection to enhance performance and reduce render-blocking requests (CU-869duqk49)
+* load reset text languages only on reset tab (CU-869dfje84)
+* reduce duplicate service-cloud queries on wpml admin loads (CU-869dfje84)
+
+
+<details><summary>Dependency updates @devowl-wp/customize 1.13.26</summary>
+
+
+**_Purpose of dependency:_** _Abstract utility for live preview (customize)_
+##### Bug Fixes
+
+* keep range input values readable in narrow customizer sidebar (CU-869dkdhz0)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.12</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Bug Fixes
+
+* compatibility with Pixfort Google Maps
+* compatibility with Responsive Menu by ExpressTech Systems
+
+
+##### Performance Improvements
+
+* reduce duplicate service-cloud queries on wpml admin loads (CU-869dfje84)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-unblocker 1.3.6</summary>
+
+
+**_Purpose of dependency:_** _Unblock mechanism for @devowl-wp/headless-content-blocker with visual capabilities._
+##### Bug Fixes
+
+* prevent visual content blocker width collapse in flex-start flex parents (CU-869dpd79k)
+* stop unmounting children-fallback nodes on consent (CU-869dpkt4p)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner-admin 1.1.38</summary>
+
+
+**_Purpose of dependency:_** _Provide admin UI for a cookie banner and content blocker for multiple services._
+##### Performance Improvements
+
+* load reset text languages only on reset tab (CU-869dfje84)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-utils 1.0.24</summary>
+
+
+**_Purpose of dependency:_** _Provide various React utils, side effect free and tree shakeable._
+##### Code Refactoring
+
+* improve usePlainCss hook and add injectPlainCss utility for dynamic style management (CU-869duqk49)</details>
+
+<details><summary>Dependency updates @devowl-wp/service-cloud-consumer 1.0.45</summary>
+
+
+**_Purpose of dependency:_** _Consume service and blocker templates from service cloud_
+##### Performance Improvements
+
+* reduce duplicate service-cloud queries on wpml admin loads (CU-869dfje84)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.26</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Build System
+
+* add support for optional post-command execution in npm libs task (CU-869duqk49)
+
+
+##### Performance Improvements
+
+* implement animate.css subset for client-side injection to enhance performance and reduce render-blocking requests (CU-869duqk49)</details>
+
+
+
+
+
+## 5.2.27 (2026-07-01) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/continuous-localization 0.8.41</summary>
+
+
+**_Purpose of dependency:_** _Provide a CLI to push and pull localization files from different translation management systems._
+##### Bug Fixes
+
+* preserve UTF-8 in Weblate PO to i18next JSON conversion (CU-869du49xe)</details>
+
+
+
+
+
+## 5.2.26 (2026-06-12) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/continuous-localization 0.8.40</summary>
+
+
+**_Purpose of dependency:_** _Provide a CLI to push and pull localization files from different translation management systems._
+##### Bug Fixes
+
+* canonicalize POT with msgcat before Weblate upload (CU-869dgah96)</details>
+
+
+
+
+
 ## 5.2.25 (2026-05-27)
 
 
