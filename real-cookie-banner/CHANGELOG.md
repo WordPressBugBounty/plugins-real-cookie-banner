@@ -3,6 +3,325 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 5.3.0 (2026-08-18)
+
+
+### Bug Fixes
+
+* allow Editors to complete loopback scanner jobs for login URLs (CU-869ee8a8e)
+* avoid false bannerless blocker warning in admin checks (CU-869dyqa1e)
+* backoff Country Bypass GeoLite download retries like TCF GVL (CU-869efzf12)
+* keep large TCF cookie policy within OOM (CU-869ejmez7)
+* make statistics Last 90 days period preset actually cover 90 days (CU-869e5dmn8)
+* prevent banner crash when wrapped content blocker has no thumbnail (CU-869edtgr3)
+* prevent critical error when MaxMind GeoIP database unarchive fails (CU-869ea3jab)
+* remap customize cap for Cookie Banner Customizer (CU-869ejmez7)
+* restore Fluent Player YouTube playback after content-blocker consent (CU-869ejtkbj)
+* tolerate forbidden REST embeds in privacy policy search (CU-869ejmez7)
+
+
+### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)
+
+
+### Features
+
+* minimum required WordPress version is now 6.1 (CU-86956vcbx)
+
+
+### Maintenance
+
+* **wordpress-plugins :** declare WordPress 7.1 compatibility in wporg readmes (CU-869ejj0vg)
+
+
+### Styles
+
+* compatibility with Open User Map plugin and their loading overlay
+
+
+<details><summary>Dependency updates @devowl-wp/api-real-cookie-banner 1.5.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Real Cookie Banner backend._
+##### Features
+
+* enable DeepL machine translation for Croatian (CU-869bf9r2y)</details>
+
+<details><summary>Dependency updates @devowl-wp/cache-invalidate 1.18.55</summary>
+
+
+**_Purpose of dependency:_** _Provide a single entry point to trigger cache invalidation of known caching plugins_
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-management 1.0.57</summary>
+
+
+**_Purpose of dependency:_** _Provide cookie consent management with adapters to your environment_
+##### Bug Fixes
+
+* keep large cookie policy shortcode from rendering empty (CU-869edy6r4)
+* keep large TCF cookie policy within OOM (CU-869ejmez7)
+* stop Simple Membership cookies from breaking consent REST API health check (CU-869ea3edh)</details>
+
+<details><summary>Dependency updates @devowl-wp/customize 1.13.31</summary>
+
+
+**_Purpose of dependency:_** _Abstract utility for live preview (customize)_
+##### Bug Fixes
+
+* remap customize cap for Cookie Banner Customizer (CU-869ejmez7)
+
+
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/deliver-anonymous-asset 1.0.56</summary>
+
+
+**_Purpose of dependency:_** _Provide a functionality to deliver assets anonymous_
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/fast-html-tag 1.4.0</summary>
+
+
+**_Purpose of dependency:_** _Find tags within HTML content and modify it in speed of light_
+##### Features
+
+* add HTML comment skip islands to FastHtmlTag (CU-869ejmez7)</details>
+
+<details><summary>Dependency updates @devowl-wp/freemium 1.3.148</summary>
+
+
+**_Purpose of dependency:_** _Make your plugin to a freemium plugin with predefined Envato support_
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.14</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Bug Fixes
+
+* compatibility with Thrive Apprentice
+* restore Fluent Player YouTube playback after content-blocker consent (CU-869ejtkbj)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-unblocker 1.3.8</summary>
+
+
+**_Purpose of dependency:_** _Unblock mechanism for @devowl-wp/headless-content-blocker with visual capabilities._
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/multilingual 1.14.32</summary>
+
+
+**_Purpose of dependency:_** _Provide helper functionality for multilingual plugins like WPML and PolyLang_
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner 1.1.42</summary>
+
+
+**_Purpose of dependency:_** _Provide UI for a cookie banner and content blocker for multiple services._
+##### Bug Fixes
+
+* expose group checkboxes in privacy settings to screen readers (CU-869eh26bc)
+* prevent banner crash when wrapped content blocker has no thumbnail (CU-869edtgr3)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner-admin 1.1.43</summary>
+
+
+**_Purpose of dependency:_** _Provide admin UI for a cookie banner and content blocker for multiple services._
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-utils 1.0.25</summary>
+
+
+**_Purpose of dependency:_** _Provide various React utils, side effect free and tree shakeable._
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-product-manager-wp-client 1.21.0</summary>
+
+
+**_Purpose of dependency:_** _A WordPress client for Real Product Manager_
+##### Bug Fixes
+
+* do not invalidate license for hostingersite.com (CU-869ea3vfe)
+* sever cloned license identity before remote calls (CU-869edzz7b)
+
+
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)
+
+
+##### Features
+
+* implement safe clone server and activation reclaim process (CU-869edzz7b)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-queue 1.1.31</summary>
+
+
+**_Purpose of dependency:_** _Provide a promise-based queue system working in frontend for client and server tasks_
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-utils 1.14.32</summary>
+
+
+**_Purpose of dependency:_** _Create about page, rating and newsletter input for WP Real plugins._
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.31</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Code Refactoring
+
+* prepare WordPress plugins for React 19 compatibility (CU-86956vcbx)</details>
+
+<details><summary>Development dependency update @devowl-wp/web-cookie-banner 1.0.30</summary>
+
+
+**_Purpose of dependency:_** _Provide a scoped stylesheet, types and util functionality for a web cookie banner._
+##### Bug Fixes
+
+* expose group checkboxes in privacy settings to screen readers (CU-869eh26bc)</details>
+
+
+
+
+
+## 5.2.32 (2026-08-10)
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.12.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Features
+
+* self-host production-ready NATS HA cluster on Docker Swarm (CU-869eenube)</details>
+
+
+
+
+
+## 5.2.31 (2026-08-04) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.11.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Bug Fixes
+
+* make the emailed download link valid for the period it advertises (CU-1yyxdg5)
+
+
+##### Features
+
+* expose streamSequence and await NATS listeners via for-await (CU-869c8tfch)</details>
+
+
+
+
+
+## 5.2.30 (2026-07-17) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Dependency updates @devowl-wp/api-real-cookie-banner 1.4.6</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Real Cookie Banner backend._
+##### Bug Fixes
+
+* add stale-while-revalidate for template REST APIs (CU-869c8tfch)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.28</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Maintenance
+
+* dynamic mc aliases from environment variables (CU-869e14thv)</details>
+
+
+
+
+
+## 5.2.29 (2026-07-13) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+
+### Maintenance
+
+* migrate storage-dev prerelease workloads to OVH buckets and remove webpack-json-stats (CU-869e14thv)
+
+
+<details><summary>Dependency updates @devowl-wp/fast-html-tag 1.3.11</summary>
+
+
+**_Purpose of dependency:_** _Find tags within HTML content and modify it in speed of light_
+##### Maintenance
+
+* squash multiple commits (original ae7282422e840405b144c67e641fd60b04ab932c, CU-869c8tfch)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.13</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Maintenance
+
+* squash multiple commits (original ae7282422e840405b144c67e641fd60b04ab932c, CU-869c8tfch)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.27</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Maintenance
+
+* migrate storage-dev prerelease workloads to OVH buckets and remove webpack-json-stats (CU-869e14thv)</details>
+
+<details><summary>Development dependency update @devowl-wp/webpack-config 0.2.60</summary>
+
+
+**_Purpose of dependency:_** _Webpack config builder for multiple ecosystems like standalone React frontends, Antd, Preact and WordPress._
+##### Maintenance
+
+* migrate storage-dev prerelease workloads to OVH buckets and remove webpack-json-stats (CU-869e14thv)</details>
+
+
+
+
+
 ## 5.2.28 (2026-07-02)
 
 

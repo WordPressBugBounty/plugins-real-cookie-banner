@@ -2,10 +2,9 @@
 
 namespace DevOwl\RealCookieBanner\view\shortcode;
 
+use DevOwl\RealCookieBanner\Vendor\DevOwl\FastHtmlTag\FastHtmlTag;
 use DevOwl\RealCookieBanner\base\UtilsProvider;
 use DevOwl\RealCookieBanner\Core;
-use DevOwl\RealCookieBanner\settings\General;
-use DevOwl\RealCookieBanner\Vendor\MatthiasWeb\Utils\Constants;
 // @codeCoverageIgnoreStart
 \defined('ABSPATH') or die('No script kiddies please!');
 // Avoid direct file request
@@ -34,8 +33,10 @@ class CookiePolicyShortcode
         $sections = $atts['sections'] ? \explode(',', $atts['sections']) : null;
         $removeHeadlines = $atts['remove-headlines'] === 'true' ? \true : \false;
         $core = Core::getInstance();
-        // Force to load banner assets
-        $core->getAssets()->enqueue_scripts_and_styles(Constants::ASSETS_TYPE_FRONTEND);
-        return \do_shortcode($core->getCookieConsentManagement()->getCookiePolicy()->renderHtml(!$core->getCompLanguage()->isCurrentlyInEditorPreview(), $sections, $removeHeadlines));
+        $html = $core->getCookieConsentManagement()->getCookiePolicy()->renderHtml(!$core->getCompLanguage()->isCurrentlyInEditorPreview(), $sections, $removeHeadlines);
+        // Nested shortcodes belong in customize copy, not in the TCF services table.
+        // WP's shortcode regex copies the haystack; keep the table out via FastHtmlTag skip islands.
+        list($html, $skipRegions) = FastHtmlTag::extractSkipRegions($html, 'HeadlessContentBlocker');
+        return FastHtmlTag::restoreSkipRegions(\do_shortcode($html), $skipRegions);
     }
 }

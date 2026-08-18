@@ -1,32 +1,32 @@
 {
   "vendor-banner.lite.js": {
     "banner-common-async": [
-      "banner-lite-banner-common-async.lite.js?ver=db3daaaff41cc839"
+      "banner-lite-banner-common-async.lite.js?ver=a461abd4da73b58a"
     ],
     "blocker-ui": [
-      "banner-lite-blocker-ui.lite.js?ver=c967fd425a129dca"
+      "banner-lite-blocker-ui.lite.js?ver=5d5612cd01fe39ef"
     ]
   },
   "banner.lite.js": {
     "banner-common-async": [
-      "banner-lite-banner-common-async.lite.js?ver=db3daaaff41cc839"
+      "banner-lite-banner-common-async.lite.js?ver=a461abd4da73b58a"
     ],
     "banner-ui": [
-      "banner-lite-banner-ui.lite.js?ver=6429799d25d1faaa"
+      "banner-lite-banner-ui.lite.js?ver=d8d98fe4485b96b8"
     ],
     "cookie-policy": [
       "banner-lite-cookie-policy.lite.js?ver=294b5485305d68eb"
     ],
     "banner-lazy": [
-      "banner-lite-banner-lazy.lite.js?ver=f6a1181d334d4ada"
+      "banner-lite-banner-lazy.lite.js?ver=0e07f769291f8010"
     ]
   },
   "blocker.lite.js": {
     "banner-common-async": [
-      "banner-lite-banner-common-async.lite.js?ver=db3daaaff41cc839"
+      "banner-lite-banner-common-async.lite.js?ver=a461abd4da73b58a"
     ],
     "blocker-ui": [
-      "banner-lite-blocker-ui.lite.js?ver=c967fd425a129dca"
+      "banner-lite-blocker-ui.lite.js?ver=5d5612cd01fe39ef"
     ]
   }
 }

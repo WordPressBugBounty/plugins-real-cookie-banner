@@ -93,6 +93,8 @@ class StandardPlugin extends AbstractPlugin
             'div[data-iframe-src:matchesUrl(),delegateClick()]',
             // [Plugin Comp] https://totalwptheme.com/docs/adding-ilightbox-popups-inline/
             'a[href:matchesUrl()][class*="wpex-lightbox":confirm(),keepAttributes(value=href,class)]',
+            // [Plugin Comp] https://wordpress.org/plugins/fluent-player/
+            'media-player[src:matchesUrl(),visualParent(value=.fluent-player-container)]',
         ]);
         /**
          * `<div>` elements are expensive in Regexp cause there a lot of them, let's assume only a
@@ -261,6 +263,10 @@ class StandardPlugin extends AbstractPlugin
             'wc_stripe_credit_card_params',
             // [Plugin Comp] Pixfort
             '/var PIX_JS_OPTIONS/m',
+            // [Plugin Comp] Thrive Apprentice
+            'ThriveAppFront',
+            // [Plugin Comp] https://wordpress.org/plugins/fluent-player/
+            '/var fluent_player/',
         ]);
         /**
          * DoNotBlockScriptTextTemplates.

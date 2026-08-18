@@ -105,7 +105,7 @@ class Assets
         $realUtils = RCB_ROOT_SLUG . '-real-utils-helper';
         // Do not enqueue anything if not needed
         if (!$isConfigPage && !\in_array($type, [Constants::ASSETS_TYPE_CUSTOMIZE], \true) && !$shouldLoadAssets) {
-            // We need to enqueue real-utils helper always in backend to keep cross-selling intact
+            // We need to enqueue real-utils helper always in backend for shared helper integrations
             if ($type === Constants::ASSETS_TYPE_ADMIN) {
                 $this->enqueueUtils();
                 \wp_enqueue_script($realUtils);
@@ -155,14 +155,20 @@ class Assets
          * @since 5.2.10
          */
         $useOptimizedWpLocalizeScript = $this->isAdvancedEnqueueEnabled($handle, Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER) ? \apply_filters('RCB/Experimental/OptimizedWpLocalizeScript', \false) : \false;
-        // Localize script with server-side variables
-        $this->anonymous_localize_script($useOptimizedWpLocalizeScript ? $this->enqueueFooterDummyHandle() : $handle, 'realCookieBanner', $this->localizeScript($type), [
-            'makeBase64Encoded' => [Cookie::META_NAME_CODE_OPT_IN, Cookie::META_NAME_CODE_OPT_OUT, Cookie::META_NAME_CODE_ON_PAGE_LOAD, 'contactEmail'],
-            'useCore' => !\in_array($type, [Constants::ASSETS_TYPE_FRONTEND, Constants::ASSETS_TYPE_LOGIN], \true) && !\is_customize_preview(),
-            // Only allow lazy parse in frontend (also not in customizer) as this conflicts with Mobx observables
-            'lazyParse' => \in_array($type, [Constants::ASSETS_TYPE_FRONTEND], \true) && !\is_customize_preview() ? ['others.frontend.tcf', 'others.frontend.groups', 'others.customizeValuesBanner'] : [],
-            'bypassJsonParse' => $useOptimizedWpLocalizeScript,
-        ]);
+        // Localize once per asset type: `[rcb-consent]` inside the cookie policy would otherwise
+        // rebuild the TCF frontend JSON on every nested shortcode during `the_content`.
+        static $localizedTypes = [];
+        $localizeHandle = $useOptimizedWpLocalizeScript ? $this->enqueueFooterDummyHandle() : $handle;
+        if (!empty($localizeHandle) && !isset($localizedTypes[$type])) {
+            $localizedTypes[$type] = \true;
+            $this->anonymous_localize_script($localizeHandle, 'realCookieBanner', $this->localizeScript($type), [
+                'makeBase64Encoded' => [Cookie::META_NAME_CODE_OPT_IN, Cookie::META_NAME_CODE_OPT_OUT, Cookie::META_NAME_CODE_ON_PAGE_LOAD, 'contactEmail'],
+                'useCore' => !\in_array($type, [Constants::ASSETS_TYPE_FRONTEND, Constants::ASSETS_TYPE_LOGIN], \true) && !\is_customize_preview(),
+                // Only allow lazy parse in frontend (also not in customizer) as this conflicts with Mobx observables
+                'lazyParse' => \in_array($type, [Constants::ASSETS_TYPE_FRONTEND], \true) && !\is_customize_preview() ? ['others.frontend.tcf', 'others.frontend.groups', 'others.customizeValuesBanner'] : [],
+                'bypassJsonParse' => $useOptimizedWpLocalizeScript,
+            ]);
+        }
     }
     /**
      * Enqueue admin page (currently only the config).

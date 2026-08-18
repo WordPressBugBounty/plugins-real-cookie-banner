@@ -4,10 +4,10 @@
       "banner_tcf-pro-vendor-banner_tcf-common-async.pro.js?ver=63ff18101ef3f27d"
     ],
     "banner_tcf-common-async": [
-      "banner_tcf-pro-banner_tcf-common-async.pro.js?ver=0ef8e5f061cb0221"
+      "banner_tcf-pro-banner_tcf-common-async.pro.js?ver=1d92251dbefcb893"
     ],
     "blocker-ui": [
-      "banner_tcf-pro-blocker-ui.pro.js?ver=102f2844261b1bdf"
+      "banner_tcf-pro-blocker-ui.pro.js?ver=42ecb9a601a8cdff"
     ]
   },
   "banner_tcf.pro.js": {
@@ -15,16 +15,16 @@
       "banner_tcf-pro-vendor-banner_tcf-common-async.pro.js?ver=63ff18101ef3f27d"
     ],
     "banner_tcf-common-async": [
-      "banner_tcf-pro-banner_tcf-common-async.pro.js?ver=0ef8e5f061cb0221"
+      "banner_tcf-pro-banner_tcf-common-async.pro.js?ver=1d92251dbefcb893"
     ],
     "banner-ui": [
-      "banner_tcf-pro-banner-ui.pro.js?ver=b0742f887958fe06"
+      "banner_tcf-pro-banner-ui.pro.js?ver=5368cd40de349678"
     ],
     "cookie-policy": [
       "banner_tcf-pro-cookie-policy.pro.js?ver=2a325de525e527b9"
     ],
     "banner-lazy": [
-      "banner_tcf-pro-banner-lazy.pro.js?ver=ae05be91fc47cbef"
+      "banner_tcf-pro-banner-lazy.pro.js?ver=cf9f17b70667f5b3"
     ]
   },
   "blocker_tcf.pro.js": {
@@ -32,10 +32,10 @@
       "banner_tcf-pro-vendor-banner_tcf-common-async.pro.js?ver=63ff18101ef3f27d"
     ],
     "banner_tcf-common-async": [
-      "banner_tcf-pro-banner_tcf-common-async.pro.js?ver=0ef8e5f061cb0221"
+      "banner_tcf-pro-banner_tcf-common-async.pro.js?ver=1d92251dbefcb893"
     ],
     "blocker-ui": [
-      "banner_tcf-pro-blocker-ui.pro.js?ver=102f2844261b1bdf"
+      "banner_tcf-pro-blocker-ui.pro.js?ver=42ecb9a601a8cdff"
     ]
   }
 }

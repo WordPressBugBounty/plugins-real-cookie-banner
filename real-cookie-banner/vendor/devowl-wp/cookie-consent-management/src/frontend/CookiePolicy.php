@@ -6,6 +6,7 @@ use DevOwl\RealCookieBanner\Vendor\DevOwl\CookieConsentManagement\CookieConsentM
 use DevOwl\RealCookieBanner\Vendor\DevOwl\CookieConsentManagement\services\TechnicalDefinitions;
 use DevOwl\RealCookieBanner\Vendor\DevOwl\CookieConsentManagement\settings\AbstractGeneral;
 use DevOwl\RealCookieBanner\Vendor\DevOwl\CookieConsentManagement\settings\BannerLink;
+use DevOwl\RealCookieBanner\Vendor\DevOwl\FastHtmlTag\FastHtmlTag;
 use DevOwl\RealCookieBanner\Vendor\DevOwl\Multilingual\Iso3166OneAlpha2;
 /**
  * A cookie policy is a server-side rendered, pure-HTML text with a table of cookie definitions and teachings.
@@ -13,6 +14,7 @@ use DevOwl\RealCookieBanner\Vendor\DevOwl\Multilingual\Iso3166OneAlpha2;
  */
 class CookiePolicy
 {
+    const LIST_OF_SERVICES_TABLE_HTML_CLASS = 'devowl-wp-react-cookie-banner-cookie-policy';
     /**
      * See `CookieConsentManagement`.
      *
@@ -77,13 +79,14 @@ class CookiePolicy
             if ($replaceVariables) {
                 $additionalContent = \str_replace('{{dateOfUpdate}}', $hashTime, $additionalContent);
             }
-            // Add h2 headlines to the table of contents from the additional content
-            $additionalContent = \preg_replace_callback('/<h2>(.*)<\\/h2>/m', function ($m) use(&$toc) {
+            // Add h2 headlines to the table of contents from the additional content.
+            // `[^<]*` stays linear on large HTML; `.*` can exhaust pcre.backtrack_limit.
+            $additionalContent = \preg_replace_callback('/<h2>([^<]*)<\\/h2>/', function ($m) use(&$toc) {
                 // TODO: use other function than sanitize_title
                 $id = \esc_attr('additiona-content-' . \sanitize_title($m[1]));
                 $toc[$id] = $m[1];
                 return \sprintf('<h2 id="%s">%s</h2>', $id, $m[1]);
-            }, $additionalContent);
+            }, $additionalContent) ?? $additionalContent;
             $output[] = \wpautop(\sprintf('<p>%s</p>', $additionalContent));
         }
         if (\in_array('table-of-contents', $sectionsToRender, \true)) {
@@ -96,11 +99,12 @@ class CookiePolicy
         }
         $html = \join('', $output);
         if ($removeHeadlines) {
-            $html = \preg_replace('/<h2[^>]*>.*<\\/h2>/', '', $html);
+            $html = \preg_replace('/<h2[^>]*>[^<]*<\\/h2>/', '', $html) ?? $html;
         }
-        // Replace variables
+        // `[^{]*` instead of `.*`: placeholder bodies never contain `{`, and `.*` on ~1M-char
+        // policy HTML exhausts the default pcre.backtrack_limit (preg returns null → empty page).
         if ($replaceVariables) {
-            $html = \preg_replace_callback('/{{(\\w+)}}(.*){{\\/\\1}}/m', function ($m) {
+            $html = \preg_replace_callback('/{{(\\w+)}}([^{]*){{\\/\\1}}/', function ($m) {
                 switch ($m[1]) {
                     case 'privacyPolicy':
                         $url = null;
@@ -115,7 +119,7 @@ class CookiePolicy
                         break;
                 }
                 return $m[0];
-            }, $html);
+            }, $html) ?? $html;
         }
         return $html;
     }
@@ -135,21 +139,21 @@ class CookiePolicy
             return '';
         }
         // Do not show the purpose column when not at least one technical definition has a purpose
-        $hasAtLeastOnePurpose = $settings->getTcf()->isActive() && \count($settings->getTcf()->getVendorConfigurations()) > 0;
+        $hasAtLeastOnePurpose = $settings->getTcf()->isActive() && $settings->getTcf()->hasVendorConfigurations();
         if (!$hasAtLeastOnePurpose) {
             foreach ($settings->getGeneral()->getServiceGroups() as $group) {
                 foreach ($group->getItems() as $service) {
                     foreach ($service->getTechnicalDefinitions() as $td) {
                         if (!empty($td->getPurpose())) {
                             $hasAtLeastOnePurpose = \true;
-                            break;
+                            break 3;
                         }
                     }
                 }
             }
         }
         // Create the HTML table
-        $table = \sprintf('<script type="application/json">%s</script><table %s class="devowl-wp-react-cookie-banner-cookie-policy"><thead><tr>', \json_encode($gridJsLanguageTexts), $isTableDarkMode ? 'data-gridjs-dark-mode' : '');
+        $table = \sprintf('<script type="application/json">%s</script><table %s class="%s"><thead><tr>', \json_encode($gridJsLanguageTexts), $isTableDarkMode ? 'data-gridjs-dark-mode' : '', self::LIST_OF_SERVICES_TABLE_HTML_CLASS);
         foreach (['category', 'technicalCookieDefinition', 'technicalCookieHost', 'service', 'duration', 'type', 'purpose'] as $column) {
             if ($column === 'purpose' && !$hasAtLeastOnePurpose) {
                 continue;
@@ -192,29 +196,30 @@ class CookiePolicy
         if ($settings->getTcf()->isActive()) {
             $gvl = $settings->getTcf()->getGvl();
             $purposes = $gvl->allDeclarations(['onlyReturnDeclarations' => \true])['purposes'];
-            foreach ($settings->getTcf()->getVendorConfigurations() as $tcfConfig) {
-                $vendor = $tcfConfig->getVendor();
-                if (isset($vendor['deviceStorageDisclosure']) && isset($vendor['deviceStorageDisclosure']['disclosures'])) {
-                    foreach ($vendor['deviceStorageDisclosure']['disclosures'] as $disclosure) {
-                        $maxAgeSeconds = $disclosure['maxAgeSeconds'] ?? null;
-                        $domain = $disclosure['domain'] ?? $columnLabels['undefined'];
-                        $domains = $disclosure['domains'] ?? null;
-                        $table .= '<tr>';
-                        $table .= \sprintf('<td>%s</td>', $columnLabels['tcfVendors']);
-                        $table .= \sprintf('<td><code>%s</code></td>', $disclosure['identifier'] ?? $columnLabels['undefined']);
-                        $table .= \sprintf('<td><code>%s</code></td>', \is_array($domains) ? \join(', ', $domains) : $domain);
-                        $table .= \sprintf('<td>%s</td>', $vendor['name']);
-                        $table .= \sprintf('<td>%s</td>', $maxAgeSeconds === null ? $columnLabels['undefined'] : $this->getDurationText($maxAgeSeconds <= 0, \intval($maxAgeSeconds), 's'));
-                        $table .= \sprintf('<td>%s</td>', \ucfirst($disclosure['type'] ?? ''));
-                        $table .= \sprintf('<td>%s</td>', \join('; ', \array_map(function ($purposeId) use($purposes) {
-                            return isset($purposes[$purposeId]) ? $purposes[$purposeId]['name'] : '';
-                        }, $disclosure['purposes'] ?? [])));
-                        $table .= '</tr>';
-                    }
+            $tcfVendorLabel = $columnLabels['tcfVendors'];
+            $undefinedLabel = $columnLabels['undefined'];
+            foreach ($settings->getTcf()->getCookiePolicyVendorDisclosures() as $vendorRow) {
+                $vendorName = $vendorRow['name'];
+                foreach ($vendorRow['disclosures'] as $disclosure) {
+                    $maxAgeSeconds = $disclosure['maxAgeSeconds'] ?? null;
+                    $domain = $disclosure['domain'] ?? $undefinedLabel;
+                    $domains = $disclosure['domains'] ?? null;
+                    $table .= '<tr>';
+                    $table .= \sprintf('<td>%s</td>', $tcfVendorLabel);
+                    $table .= \sprintf('<td><code>%s</code></td>', $disclosure['identifier'] ?? $undefinedLabel);
+                    $table .= \sprintf('<td><code>%s</code></td>', \is_array($domains) ? \join(', ', $domains) : $domain);
+                    $table .= \sprintf('<td>%s</td>', $vendorName);
+                    $table .= \sprintf('<td>%s</td>', $maxAgeSeconds === null ? $undefinedLabel : $this->getDurationText($maxAgeSeconds <= 0, \intval($maxAgeSeconds), 's'));
+                    $table .= \sprintf('<td>%s</td>', \ucfirst($disclosure['type'] ?? ''));
+                    $table .= \sprintf('<td>%s</td>', \join('; ', \array_map(function ($purposeId) use($purposes) {
+                        return isset($purposes[$purposeId]) ? $purposes[$purposeId]['name'] : '';
+                    }, $disclosure['purposes'] ?? [])));
+                    $table .= '</tr>';
                 }
             }
         }
         $table .= '</tbody></table>';
+        $table = FastHtmlTag::wrapSkipRegion($table, 'HeadlessContentBlocker');
         $toc['list-of-services'] = $headline;
         return \sprintf('<h2 id="list-of-services">%s</h2>%s', $headline, $table);
     }
