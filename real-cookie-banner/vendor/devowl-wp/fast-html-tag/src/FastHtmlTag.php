@@ -162,9 +162,22 @@ class FastHtmlTag
             $this->rerun = \false;
             $html = $this->modifyHtml($html);
         }
-        // Remove invisible attributes (https://regex101.com/r/QAy0R0/2)
-        $html = \preg_replace(\sprintf('/\\s+%s[^\\s>\\/]+/m', AbstractMatch::HTML_ATTRIBUTE_INVISIBLE_PREFIX), '', $html);
+        $html = self::removeInvisibleAttributes($html);
         return self::restoreSkipRegions($html, $regions);
+    }
+    /**
+     * Remove all invisible attributes (see `AbstractMatch::setInvisibleAttribute`) from a given HTML string.
+     *
+     * The pattern matches a whole `prefix-<key>="<value>"` attribute so it can never consume a neighbouring
+     * attribute's quote delimiter (which would turn inert user content, e.g. an approved comment, into
+     * executable HTML). The `(?<!\s)` anchor keeps matching linear on the JS twin.
+     * Pattern with test cases: https://regex101.com/r/SHtewb/1
+     *
+     * @param string $html
+     */
+    public static function removeInvisibleAttributes($html)
+    {
+        return \preg_replace(\sprintf('/(?<!\\s)\\s+%s[^\\s=>\\/"\']+="[^"]*"/m', AbstractMatch::HTML_ATTRIBUTE_INVISIBLE_PREFIX), '', $html);
     }
     /**
      * HTML comment that opens a skip island for `modifyHtml`.

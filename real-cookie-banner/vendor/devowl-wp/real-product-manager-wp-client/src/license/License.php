@@ -356,7 +356,7 @@ class License
             $this->restore();
             return \false;
         }
-        $this->getActivation()->persistLocalLicenseActivationFromRemote($response['licenseActivation']);
+        $this->getActivation()->persistLocalLicenseActivationFromRemote($response['licenseActivation'], $response['featureFlags'] ?? []);
         // After persist (which clears hints): surface a one-time info for the license UI
         $restoredAt = \date_i18n(\get_option('date_format') . ' ' . \get_option('time_format'));
         \update_option(self::OPTION_NAME_HINT_PREFIX . $this->getSlug(), ['validateStatus' => 'info', 'hasFeedback' => \false, 'help' => \sprintf(
@@ -396,7 +396,11 @@ class License
             }
         }
         if (!$isError && isset($response['licenseActivation'])) {
-            $this->receivedRemoteLicenseActivation($response['licenseActivation']);
+            $licenseActivation = $response['licenseActivation'];
+            if (\array_key_exists('featureFlags', $response) && \is_array($response['featureFlags'])) {
+                $licenseActivation['featureFlags'] = $response['featureFlags'];
+            }
+            $this->receivedRemoteLicenseActivation($licenseActivation);
         }
         return \true;
     }
