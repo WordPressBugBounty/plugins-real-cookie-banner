@@ -1,6 +1,6 @@
 {
     "name": "@devowl-wp/customize",
-    "version": "1.13.35",
+    "version": "1.13.37",
     "private": true,
     "description": "Abstract utility for live preview (customize)",
     "homepage": "https://devowl.io",
@@ -8,7 +8,7 @@
     "author": "Matthias Günter",
     "sideEffects": [
         "**/*.{css,scss,less}",
-        "./src/public/ts/*.tsx"
+        "./lib/*.tsx"
     ],
     "type": "module",
     "exports": {

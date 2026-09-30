@@ -14,6 +14,7 @@ use DevOwl\RealCookieBanner\settings\CookieGroup;
 use DevOwl\RealCookieBanner\settings\CountryBypass;
 use DevOwl\RealCookieBanner\settings\Revision;
 use DevOwl\RealCookieBanner\settings\General;
+use DevOwl\RealCookieBanner\Vendor\DevOwl\HeadlessContentBlocker\Constants as HeadlessConstants;
 use DevOwl\RealCookieBanner\view\Blocker;
 use DevOwl\RealCookieBanner\settings\TCF;
 use DevOwl\RealCookieBanner\view\Banner;
@@ -102,6 +103,7 @@ class Assets
         $banner = $core->getBanner();
         $isConfigPage = $core->getConfigPage()->isVisible($hook_suffix);
         $shouldLoadAssets = $banner->shouldLoadAssets($type);
+        $isFeatureEnabled = $core->getRpmInitiator()->getPluginUpdater()->getCurrentBlogLicense()->getActivation()->isFeatureEnabled('optimized-assets');
         $realUtils = RCB_ROOT_SLUG . '-real-utils-helper';
         // Do not enqueue anything if not needed
         if (!$isConfigPage && !\in_array($type, [Constants::ASSETS_TYPE_CUSTOMIZE], \true) && !$shouldLoadAssets) {
@@ -143,31 +145,112 @@ class Assets
             }
         }
         /**
-         * If you return `true`, the optimized wp_localize_script will be used:
+         * If you return `true`, localization uses bucket-backed resource groups:
          *
-         * - Moves the JSON to the footer but keeps the banner script in the header
-         * - Bypasses the JSON.parse call from the HTML parsing process and just exposes the raw JSON string in the inline script in the HTML
-         * - This improves performance as the JSON parsing is offloaded to a deferred script
+         * - Slim blocking inline bootstrap on the banner handle
+         * - Remaining payload in deferred resource groups under the anonymous uploads bucket (`others` last)
+         * - Falls back to `anonymous_localize_script` when that write cannot be guaranteed
          *
          * @hook RCB/Experimental/OptimizedWpLocalizeScript
          * @param {boolean} $useOptimizedWpLocalizeScript
          * @return {boolean}
          * @since 5.2.10
          */
-        $useOptimizedWpLocalizeScript = $this->isAdvancedEnqueueEnabled($handle, Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER) ? \apply_filters('RCB/Experimental/OptimizedWpLocalizeScript', \false) : \false;
+        $useOptimizedWpLocalizeScript = $this->isAdvancedEnqueueEnabled($handle, Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER) ? \apply_filters('RCB/Experimental/OptimizedWpLocalizeScript', $isFeatureEnabled) : \false;
         // Localize once per asset type: `[rcb-consent]` inside the cookie policy would otherwise
         // rebuild the TCF frontend JSON on every nested shortcode during `the_content`.
         static $localizedTypes = [];
-        $localizeHandle = $useOptimizedWpLocalizeScript ? $this->enqueueFooterDummyHandle() : $handle;
-        if (!empty($localizeHandle) && !isset($localizedTypes[$type])) {
+        if (!empty($handle) && !isset($localizedTypes[$type])) {
             $localizedTypes[$type] = \true;
-            $this->anonymous_localize_script($localizeHandle, 'realCookieBanner', $this->localizeScript($type), [
-                'makeBase64Encoded' => [Cookie::META_NAME_CODE_OPT_IN, Cookie::META_NAME_CODE_OPT_OUT, Cookie::META_NAME_CODE_ON_PAGE_LOAD, 'contactEmail'],
-                'useCore' => !\in_array($type, [Constants::ASSETS_TYPE_FRONTEND, Constants::ASSETS_TYPE_LOGIN], \true) && !\is_customize_preview(),
-                // Only allow lazy parse in frontend (also not in customizer) as this conflicts with Mobx observables
-                'lazyParse' => \in_array($type, [Constants::ASSETS_TYPE_FRONTEND], \true) && !\is_customize_preview() ? ['others.frontend.tcf', 'others.frontend.groups', 'others.customizeValuesBanner'] : [],
-                'bypassJsonParse' => $useOptimizedWpLocalizeScript,
-            ]);
+            $l10n = $this->localizeScript($type);
+            $usedResourceGroups = \false;
+            $useCore = !\in_array($type, [Constants::ASSETS_TYPE_FRONTEND, Constants::ASSETS_TYPE_LOGIN], \true) && !\is_customize_preview();
+            if ($useOptimizedWpLocalizeScript && !$useCore) {
+                $deferHandles = $core->getAnonymousAssetBuilder()->getLocalizeScriptResources()->wpLocalizeScriptResources($handle, 'realCookieBanner', $l10n, [
+                    // Everything what belongs to the second view of the cookie banner
+                    'secondView' => ['path' => 'others', 'strategy' => 'lazy', 'required' => \false, 'include' => ['frontend.websiteOperator', 'frontend.groups[].description', 'frontend.groups[].items[].purpose', 'frontend.groups[].items[].provider', 'frontend.groups[].items[].providerContact', 'frontend.groups[].items[].isProviderCurrentWebsite', 'frontend.groups[].items[].providerPrivacyPolicyUrl', 'frontend.groups[].items[].providerLegalNoticeUrl', 'frontend.groups[].items[].technicalDefinitions[].purpose']],
+                    // Everything what belongs to the consent management e.g., after clicking a button in the cookie banner
+                    // Commented out to save one additional request: same intended fetchpriority "low" as "others"
+                    /*'consent' => [
+                          'path' => 'others.frontend',
+                          'strategy' => 'defer',
+                          'required' => true,
+                          'include' => [
+                              'tcf',
+                              'tcfMetadata',
+                              'groups[].items[].codeOptIn',
+                              'groups[].items[].codeOptOut',
+                              'groups[].items[].codeDynamics',
+                              'groups[].items[].executePriority',
+                              'groups[].items[].executeCodeOptInWhenNoTagManagerConsentIsGiven',
+                              'groups[].items[].executeCodeOptOutWhenNoTagManagerConsentIsGiven',
+                              'groups[].items[].uniqueName',
+                              'groups[].items[].tagManagerOptInEventName',
+                              'groups[].items[].tagManagerOptOutEventName',
+                              'groups[].items[].presetId',
+                              'groups[].items[].deleteTechnicalDefinitionsAfterOptOut',
+                              'groups[].items[].technicalDefinitions[].type',
+                              'groups[].items[].technicalDefinitions[].name',
+                              'groups[].items[].technicalDefinitions[].host',
+                              'groups[].items[].technicalDefinitions[].duration',
+                              'groups[].items[].technicalDefinitions[].durationUnit',
+                              'groups[].items[].technicalDefinitions[].isSessionDuration',
+                          ],
+                      ],*/
+                    // Everything what belongs to the UI of the cookie banner
+                    // Commented out to save one additional request: same intended fetchpriority "low" as "others"
+                    /*'ui' => [
+                          'path' => 'others',
+                          'strategy' => 'defer',
+                          'required' => true,
+                          'include' => [
+                              'customizeValuesBanner',
+                              'bannerI18n',
+                              'animateCss',
+                              'visualParentSelectors',
+                              'dependantVisibilityContainers',
+                              'disableDeduplicateExceptions',
+                              'frontend.blocker',
+                              'frontend.links',
+                              'frontend.languageSwitcher',
+                              'frontend.groups[].name',
+                              'frontend.groups[].isEssential',
+                              'frontend.groups[].items[].name',
+                              'frontend.groups[].items[].legalBasis',
+                              'frontend.groups[].items[].dataProcessingInCountries',
+                              'frontend.groups[].items[].dataProcessingInCountriesSpecialTreatments',
+                              'frontend.groups[].items[].googleConsentModeConsentTypes',
+                              'frontend.groups[].items[].isEmbeddingOnlyExternalResources',
+                          ],
+                      ],*/
+                    'others' => ['path' => 'others', 'strategy' => 'defer', 'required' => \true, 'exclude' => ['pageRequestUuid4']],
+                ]);
+                if ($deferHandles !== \false) {
+                    $usedResourceGroups = \true;
+                    $excludeAttributes = $this->getAnonymousLocalizeScriptHtmlAttributes();
+                    $skipBlockerAttr = HeadlessConstants::HTML_ATTRIBUTE_CONSENT_SKIP_BLOCKER;
+                    $skipBlockerValue = HeadlessConstants::HTML_ATTRIBUTE_CONSENT_SKIP_BLOCKER_VALUE;
+                    $core->getExcludeAssets()->byHandle('js', $deferHandles);
+                    $this->addAttributesToScriptHandles($deferHandles, $excludeAttributes);
+                    $this->addAttributesToInlineScriptHandles(\array_merge($deferHandles, [$handle]), \array_merge($excludeAttributes, [$skipBlockerAttr => $skipBlockerValue]));
+                    // Early discovery for defer RG files without competing with host LCP (never high).
+                    // Skip when the banner handle itself has no preload (failure-support / customize).
+                    if ($this->isAdvancedEnqueueEnabled($handle, Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_PRELOADING)) {
+                        $this->enablePreloadEnqueue($deferHandles, 'script', [], 'low');
+                    }
+                    if ($this->isAdvancedEnqueueEnabled($handle, Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER)) {
+                        $this->enableDeferredEnqueue($deferHandles);
+                    }
+                }
+            }
+            if (!$usedResourceGroups) {
+                $this->anonymous_localize_script($handle, 'realCookieBanner', $l10n, [
+                    'makeBase64Encoded' => [Cookie::META_NAME_CODE_OPT_IN, Cookie::META_NAME_CODE_OPT_OUT, Cookie::META_NAME_CODE_ON_PAGE_LOAD, 'contactEmail'],
+                    'useCore' => $useCore,
+                    // Only allow lazy parse in frontend (also not in customizer) as this conflicts with Mobx observables
+                    'lazyParse' => \in_array($type, [Constants::ASSETS_TYPE_FRONTEND], \true) && !\is_customize_preview() ? ['others.frontend.tcf', 'others.frontend.groups', 'others.customizeValuesBanner'] : [],
+                ]);
+            }
         }
     }
     /**
@@ -211,7 +294,7 @@ class Assets
             $handle = $this->enqueueLibraryScript('iabtcf-stub', self::TCF_STUB_PATH);
             \array_unshift($scriptDeps, $handle);
             if ($handle !== \false && $isAntiAdBlock) {
-                $anonymousAssetsBuilder->ready('iabtcf-stub');
+                $anonymousAssetsBuilder->ready('iabtcf-stub', $this->readyConditionForAnonymousAssets());
             }
         }
         // Enqueue scripts in customize preview
@@ -222,8 +305,8 @@ class Assets
             $handle = $this->enqueueScript($isTcf ? 'banner_tcf' : 'banner', [[$isTcf, 'banner_tcf.pro.js'], [$this->isPro(), 'banner.pro.js'], 'banner.lite.js'], $scriptDeps, \false);
             // Modify the URL so it is obtained by a hashed root URL
             if ($handle !== \false && $isAntiAdBlock) {
-                $anonymousAssetsBuilder->ready('banner', !$useNonMinifiedSources);
-                $anonymousAssetsBuilder->ready('vendorBanner', !$useNonMinifiedSources);
+                $anonymousAssetsBuilder->ready('banner', $this->readyConditionForAnonymousAssets());
+                $anonymousAssetsBuilder->ready('vendorBanner', $this->readyConditionForAnonymousAssets());
             }
             // Populate `codeOnPageLoad`
             \add_action('wp_head', [\DevOwl\RealCookieBanner\Core::getInstance()->getBanner(), 'wp_head'], 2);
@@ -239,7 +322,8 @@ class Assets
         }
         if ($handle !== \false) {
             $preloadJs = ['iabtcf-stub', $handle];
-            $preloadCss = $useClientAnimateCss ? [] : ['animate-css'];
+            // animate-css: enqueue/exclude only — do not preload (not LCP; prefer client-inline subset).
+            $excludeCss = $useClientAnimateCss ? [] : ['animate-css'];
             $advancedFeatures = [Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_PRIORITY_QUEUE];
             if (!$excludeAssets->hasFailureSupportPluginActive()) {
                 $advancedFeatures[] = Constants::ASSETS_ADVANCED_ENQUEUE_FEATURE_DEFER;
@@ -248,39 +332,15 @@ class Assets
             // Only enable the advanced enqueue when we are not relying on `react-dom` as this could lead to issues with
             // e.g. WP Fastest Cache which moves `react-dom` to the body footer -> "Undefined variable ReactDOM" error.
             if (!\is_customize_preview()) {
-                $this->enableAdvancedEnqueue($preloadJs, $advancedFeatures, 'script', $this->getBannerJavaScriptChunkPreloadNames());
-                $this->enableAdvancedEnqueue($preloadCss, $advancedFeatures, 'style');
+                $this->enableAdvancedEnqueue($preloadJs, $advancedFeatures, 'script', [], 'low');
             }
             $excludeAssets->byHandle('js', $preloadJs);
-            $excludeAssets->byHandle('css', $preloadCss);
+            $excludeAssets->byHandle('css', $excludeCss);
         }
         // Add window.consentApi stubs
         \wp_add_inline_script($handle, '((a,b)=>{a[b]||(a[b]={unblockSync:()=>undefined},["consentSync"].forEach(c=>a[b][c]=()=>({cookie:null,consentGiven:!1,cookieOptIn:!0})),["consent","consentAll","unblock"].forEach(c=>a[b][c]=(...d)=>new Promise(e=>a.addEventListener(b,()=>{a[b][c](...d).then(e)},{once:!0}))))})(window,"consentApi");', 'before');
         $this->handleBanner = $handle;
         return $handle;
-    }
-    /**
-     * Webpack chunk names for `<link rel="preload">` hints. Omitted in banner-less mode when the cookie
-     * banner UI is not shown on the current page (avoids unused-preload console warnings).
-     *
-     * @return string[]
-     */
-    private function getBannerJavaScriptChunkPreloadNames()
-    {
-        $defaultChunks = ['banner-ui', 'banner-lazy', 'banner-common-async', 'vendor-banner-common-async'];
-        $consent = Consent::getInstance();
-        if (!$consent->isBannerLessConsent() || \is_customize_preview()) {
-            return $defaultChunks;
-        }
-        $showOnPageIds = $consent->getBannerLessConsentShowOnPageIds();
-        if (\count($showOnPageIds) === 0) {
-            return [];
-        }
-        $pageId = \get_queried_object_id();
-        if ($pageId > 0 && \in_array($pageId, $showOnPageIds, \true)) {
-            return $defaultChunks;
-        }
-        return [];
     }
     /**
      * Enqueue the blocker.
@@ -289,19 +349,18 @@ class Assets
      */
     public function enqueueBlocker($scriptDeps)
     {
-        $useNonMinifiedSources = $this->useNonMinifiedSources();
         $anonymousAssetsBuilder = \DevOwl\RealCookieBanner\Core::getInstance()->getAnonymousAssetBuilder();
         $isTcf = TCF::getInstance()->isActive() && TcfVendorConfiguration::getInstance()->getAllCount() > 0;
         $isAntiAdBlock = $this->isAntiAdBlockActive();
         $handleName = $isTcf ? 'blocker_tcf' : 'blocker';
         $handle = $this->enqueueScript($handleName, [[$isTcf, 'blocker_tcf.pro.js'], [$this->isPro(), 'blocker.pro.js'], 'blocker.lite.js'], $scriptDeps);
         if ($isAntiAdBlock) {
-            $anonymousAssetsBuilder->ready('blocker', !$useNonMinifiedSources);
-            $anonymousAssetsBuilder->ready('vendorBlocker', !$useNonMinifiedSources);
+            $anonymousAssetsBuilder->ready('blocker', $this->readyConditionForAnonymousAssets());
+            $anonymousAssetsBuilder->ready('vendorBlocker', $this->readyConditionForAnonymousAssets());
         }
         if ($handle !== \false) {
             $this->enableDeferredEnqueue($handle);
-            $this->enablePreloadEnqueue($handle, 'script');
+            $this->enablePreloadEnqueue($handle, 'script', [], 'low');
             $excludeAssets = \DevOwl\RealCookieBanner\Core::getInstance()->getExcludeAssets();
             $excludeAssets->byHandle('js', [$handle]);
         }
@@ -395,7 +454,7 @@ class Assets
              */
             $isPreventPreDecision = \apply_filters('RCB/IsPreventPreDecision', $isPreventPreDecision);
         }
-        return \apply_filters('RCB/Localize', \array_merge($result, $this->localizeFreemiumScript(), ['frontend' => $frontendJson, 'anonymousContentUrl' => $anonymousAssetBuilder->generateFolderSrc(), 'anonymousHash' => $anonymousAssetBuilder->getContentDir() && !$this->useNonMinifiedSources() && $this->isAntiAdBlockActive() ? $anonymousAssetBuilder->getHash() : null, 'hasDynamicPreDecisions' => \has_filter('RCB/Consent/DynamicPreDecision'), 'isLicensed' => $isLicensed, 'isDevLicense' => $isDevLicense, 'multilingualSkipHTMLForTag' => $core->getCompLanguage()->getSkipHTMLForTag(), 'isCurrentlyInTranslationEditorPreview' => $core->getCompLanguage()->isCurrentlyInEditorPreview(), 'defaultLanguage' => $core->getCompLanguage()->getDefaultLanguage(), 'currentLanguage' => $core->getCompLanguage()->getCurrentLanguage(), 'activeLanguages' => $core->getCompLanguage()->getActiveLanguages(), 'context' => Revision::getInstance()->getContextVariablesString(), 'iso3166OneAlpha2' => Iso3166OneAlpha2::getSortedCodes(), 'visualParentSelectors' => Blocker::VISUAL_PARENT_SELECTORS, 'isPreventPreDecision' => $isPreventPreDecision, 'isInvalidateImplicitUserConsent' => $frontend->isInvalidateImplicitUserConsent($pageIds), 'dependantVisibilityContainers' => Blocker::DEPENDANT_VISIBILITY_CONTAINERS, 'disableDeduplicateExceptions' => Blocker::DISABLE_DEDUPLICATE_EXCEPTIONS, 'bannerDesignVersion' => Banner::DESIGN_VERSION, 'bannerI18n' => \array_merge($core->getCompLanguage()->translateArray([
+        return \apply_filters('RCB/Localize', \array_merge($result, $this->localizeFreemiumScript(), ['frontend' => $frontendJson, 'anonymousContentUrl' => $anonymousAssetBuilder->generateFolderSrc(), 'anonymousHash' => $anonymousAssetBuilder->getContentDir() && $this->readyConditionForAnonymousAssets() && $this->isAntiAdBlockActive() ? $anonymousAssetBuilder->getHash() : null, 'hasDynamicPreDecisions' => \has_filter('RCB/Consent/DynamicPreDecision'), 'isLicensed' => $isLicensed, 'isDevLicense' => $isDevLicense, 'multilingualSkipHTMLForTag' => $core->getCompLanguage()->getSkipHTMLForTag(), 'isCurrentlyInTranslationEditorPreview' => $core->getCompLanguage()->isCurrentlyInEditorPreview(), 'defaultLanguage' => $core->getCompLanguage()->getDefaultLanguage(), 'currentLanguage' => $core->getCompLanguage()->getCurrentLanguage(), 'activeLanguages' => $core->getCompLanguage()->getActiveLanguages(), 'context' => Revision::getInstance()->getContextVariablesString(), 'iso3166OneAlpha2' => Iso3166OneAlpha2::getSortedCodes(), 'visualParentSelectors' => Blocker::VISUAL_PARENT_SELECTORS, 'isPreventPreDecision' => $isPreventPreDecision, 'isInvalidateImplicitUserConsent' => $frontend->isInvalidateImplicitUserConsent($pageIds), 'dependantVisibilityContainers' => Blocker::DEPENDANT_VISIBILITY_CONTAINERS, 'disableDeduplicateExceptions' => Blocker::DISABLE_DEDUPLICATE_EXCEPTIONS, 'bannerDesignVersion' => Banner::DESIGN_VERSION, 'bannerI18n' => \array_merge($core->getCompLanguage()->translateArray([
             'showMore' => \__('Show more', 'real-cookie-banner'),
             'hideMore' => \__('Hide', 'real-cookie-banner'),
             // translators:
@@ -479,6 +538,13 @@ class Assets
             }
         }
         return $hints;
+    }
+    /**
+     * Check if the anonymous assets should be used for the current request.
+     */
+    private function readyConditionForAnonymousAssets()
+    {
+        return !$this->useNonMinifiedSources();
     }
     /**
      * Check if the current banner is configured to provide an anti ad block system.

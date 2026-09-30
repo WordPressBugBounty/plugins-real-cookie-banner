@@ -31,6 +31,8 @@ function rcb_uninstall() {
         define('RCB_DB_PREFIX', 'rcb');
         define('RCB_OPT_PREFIX', 'rcb');
         define('RCB_SLUG_CAMELCASE', lcfirst(str_replace('-', '', ucwords(RCB_SLUG, '-'))));
+        define('RCB_SLUG_PRO', 'real-cookie-banner-pro');
+        define('RCB_SLUG_LITE', 'real-cookie-banner');
     }
 
     // Require autoloader so we can use functions and classes

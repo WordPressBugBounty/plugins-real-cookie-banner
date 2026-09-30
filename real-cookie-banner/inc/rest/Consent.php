@@ -77,6 +77,67 @@ class Consent
         return \current_user_can(Core::MANAGE_MIN_CAPABILITY);
     }
     /**
+     * Public Real Cookie Banner REST endpoints must stay anonymous: no login and no
+     * Application Password auth. Application Passwords reuse HTTP Basic Auth, so
+     * directory protection (Plesk, Traefik) looks like a failed login (`invalid_username`)
+     * and Core would 401 these visitor routes.
+     *
+     * That conflicts with the consent check loopback (`SavingConsentViaRestApiEndpointChecker`),
+     * which must forward directory-protection Basic Auth so the dummy POST reaches `/consent`
+     * behind Traefik/Plesk — without this filter the check reports a false-positive failure.
+     *
+     * @param bool $isApiRequest
+     * @see https://developer.wordpress.org/reference/hooks/application_password_is_api_request/
+     * @see https://developer.wordpress.org/reference/functions/wp_authenticate_application_password/
+     * @see https://developer.wordpress.org/reference/functions/wp_validate_application_password/
+     */
+    public function application_password_is_api_request($isApiRequest)
+    {
+        return $this->isAnonymousConsentRestRoute() ? \false : $isApiRequest;
+    }
+    /**
+     * Visitor-facing consent routes (`permission_callback` is `__return_true`).
+     *
+     * `determine_current_user` runs before `rest_route` is filled, so fall back to REQUEST_URI.
+     */
+    protected function isAnonymousConsentRestRoute()
+    {
+        $route = '';
+        if (isset($GLOBALS['wp']->query_vars['rest_route']) && $GLOBALS['wp']->query_vars['rest_route'] !== '') {
+            $route = $GLOBALS['wp']->query_vars['rest_route'];
+        } elseif (isset($_GET['rest_route'])) {
+            $route = \sanitize_text_field(\wp_unslash($_GET['rest_route']));
+        } elseif (isset($_SERVER['REQUEST_URI'])) {
+            $path = \wp_parse_url(\sanitize_text_field(\wp_unslash($_SERVER['REQUEST_URI'])), \PHP_URL_PATH);
+            if (\is_string($path)) {
+                $prefix = '/' . \rest_get_url_prefix() . '/';
+                $pos = \strpos($path, $prefix);
+                if ($pos !== \false) {
+                    $route = \substr($path, $pos + \strlen($prefix));
+                }
+            }
+        }
+        if (!\is_string($route) || $route === '') {
+            return \false;
+        }
+        $route = \untrailingslashit($route);
+        if ($route === '') {
+            return \false;
+        }
+        if ($route[0] !== '/') {
+            $route = '/' . $route;
+        }
+        // Exact paths under this plugin's REST namespace only — a bare suffix match would
+        // disable Application Passwords for any other plugin route ending in `/consent`.
+        $namespacePrefix = '/' . Service::getNamespace($this);
+        foreach (['/consent', '/consent/clear', '/consent/dynamic-predecision', '/consent/forward'] as $suffix) {
+            if ($route === $namespacePrefix . $suffix) {
+                return \true;
+            }
+        }
+        return \false;
+    }
+    /**
      * See API docs.
      *
      * @param WP_REST_Request $request

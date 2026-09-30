@@ -32,117 +32,84 @@ class DeliverAnonymousAsset
         $this->builder = $builder;
         $this->handle = $handle;
         $this->file = $file;
-        $this->hooks();
-    }
-    /**
-     * Create hooks.
-     */
-    protected function hooks()
-    {
-        \add_action('DevOwl/DeliverAnonymousAsset/Update/' . $this->getBuilder()->getOptionNamePrefix(), [$this, 'deleteOldHashes']);
         \add_filter('attribute_escape', [$this, 'attribute_escape']);
         \add_filter('script_loader_tag', [$this, 'script_loader_tag'], 10, 2);
-    }
-    /**
-     * Delete all outdated files.
-     *
-     * @param string[] $deletedHashes
-     * @deprecated This is only implemented for backwards compatibility to delete old files directly placed in `wp-content` instead of a subfolder
-     */
-    public function deleteOldHashes($deletedHashes)
-    {
-        $contentDir = $this->getBuilder()->getContentDir();
-        // Instead of the old mechanism, we just read the directory for filenames matching MD5
-        /*$extension = pathinfo($this->getFile(), PATHINFO_EXTENSION);
-                foreach ($deletedHashes as $deletedHash) {
-                    $filename = md5($deletedHash . $this->getHandle()) . '.' . $extension;
-                    $filename = $contentDir . $filename;
-        
-                    if (file_exists($filename)) {
-                        unlink($filename);
-                    }
-                }*/
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-        foreach (\list_files($contentDir, 1) as $file) {
-            if (\strlen(\basename($file)) === 35 && \is_readable($file) && \time() - \filemtime($file) > 28 * 24 * 60 * 60) {
-                $fileContent = \file_get_contents($file);
-                if (\strpos($fileContent, 'realCookieBanner') !== \false || \strpos($fileContent, '__tcfapiLocator') !== \false) {
-                    \unlink($file);
-                }
-            }
-        }
+        \add_filter('wp_inline_script_attributes', [$this, 'wp_inline_script_attributes'], 100);
     }
     /**
      * The handle is enqueued, let's modify the `WP_Dependency`.
      */
     public function ready()
     {
-        $builder = $this->getBuilder();
-        // Check if folder can be created and is writable
-        if (!$builder->ensureAnonymousFolder()) {
+        if (!$this->builder->ensureAnonymousFolder()) {
             return \false;
         }
         $scripts = \wp_scripts();
-        $script = $scripts->query($this->getHandle());
+        $script = $scripts->query($this->handle);
         if (!$script) {
             return \false;
         }
-        // Check if already adjusted
         $usedFilenameWithoutExtension = \explode('.', \basename($script->src))[0];
-        if (\strlen($usedFilenameWithoutExtension) !== 32) {
-            $script->src = $this->generateSrc();
-            // Make it compatible with chunks
-            // Add chunk preloads if desired
-            $chunks = $scripts->get_data($this->getHandle(), 'chunks');
-            if (\is_array($chunks)) {
-                foreach ($chunks as $chunkName => &$chunkUrl) {
-                    $filenameAndQueryString = \explode('?', \basename($chunkUrl), 2);
-                    $filename = $filenameAndQueryString[0];
-                    $queryString = $filenameAndQueryString[1] ?? '';
-                    $anonymousChunkFilename = AnonymousAssetBuilder::generateFilename($this->getBuilder()->getHash(), $filename);
-                    $srcDir = $script->src;
-                    if (\strpos($srcDir, '://') !== \false) {
-                        // Treat as URL
-                        $parsed = \parse_url($srcDir);
-                        $path = isset($parsed['path']) ? \dirname($parsed['path']) : '';
-                        $srcDir = $parsed['scheme'] . '://' . $parsed['host'] . (isset($parsed['port']) ? ':' . $parsed['port'] : '') . $path;
-                    } else {
-                        $srcDir = \dirname($srcDir);
-                    }
-                    $chunkUrl = $srcDir . '/' . $anonymousChunkFilename . (empty($queryString) ? '' : '?' . $queryString);
-                }
-                $scripts->add_data($this->getHandle(), 'chunks', $chunks);
-            }
-            return \true;
+        if (\preg_match('/^[a-f0-9]{10}$/', $usedFilenameWithoutExtension) || \preg_match('/^[a-f0-9]{32}$/', $usedFilenameWithoutExtension)) {
+            return \false;
         }
-        return \false;
+        $src = $this->generateSrc();
+        if ($src === '') {
+            return \false;
+        }
+        $script->src = $src;
+        $chunks = $scripts->get_data($this->handle, 'chunks');
+        if (\is_array($chunks)) {
+            foreach ($chunks as &$chunkUrl) {
+                $filenameAndQueryString = \explode('?', \basename($chunkUrl), 2);
+                $filename = $filenameAndQueryString[0];
+                $queryString = $filenameAndQueryString[1] ?? '';
+                $anonymousChunkFilename = AnonymousAssetBuilder::generateFilename($this->builder->getHash(), $filename);
+                $srcDir = $script->src;
+                if (\strpos($srcDir, '://') !== \false) {
+                    $parsed = \parse_url($srcDir);
+                    $path = isset($parsed['path']) ? \dirname($parsed['path']) : '';
+                    $srcDir = $parsed['scheme'] . '://' . $parsed['host'] . (isset($parsed['port']) ? ':' . $parsed['port'] : '') . $path;
+                } else {
+                    $srcDir = \dirname($srcDir);
+                }
+                $chunkUrl = $srcDir . '/' . $anonymousChunkFilename . (empty($queryString) ? '' : '?' . $queryString);
+            }
+            $scripts->add_data($this->handle, 'chunks', $chunks);
+        }
+        return \true;
     }
     /**
      * Generate the file in our content directory and return the URL.
      */
     protected function generateSrc()
     {
-        $anonymousFolder = $this->getBuilder()->ensureAnonymousFolder(\true);
-        $contentDir = \wp_normalize_path(\constant('WP_CONTENT_DIR') . '/');
-        $contentPath = $anonymousFolder . AnonymousAssetBuilder::generateFilename($this->getBuilder()->getHash(), $this->getFile());
-        $contentUrl = Utils::getContentUrl();
+        $anonymousFolder = $this->builder->ensureAnonymousFolder(\true);
+        if ($anonymousFolder === \false) {
+            return '';
+        }
+        $contentPath = $anonymousFolder . AnonymousAssetBuilder::generateFilename($this->builder->getHash(), $this->file);
         if (!\file_exists($contentPath)) {
-            // The file does not exist, perhaps it was not part of the passed `$folder` in `AnnonymousAssetBulder` constructor?
-            // This could happen for e.g. libraries in `public/lib/`
-            \file_put_contents($contentPath, Utils::readFileAndCorrectSourceMap($this->getFile()));
+            // Keep the original registered URL when the source is missing or the copy fails —
+            // advertising the hashed path would 404 on the page.
+            if (!\is_readable($this->file)) {
+                return '';
+            }
+            if (!Utils::writeFileCompletely($contentPath, $this->builder->readFileAndCorrectSourceMap($this->file))) {
+                return '';
+            }
             UtilsUtils::runDirectFilesystem(function ($fs) use($contentPath) {
                 /**
                  * WP_Filesystem_Direct.
                  *
-                 *  @var WP_Filesystem_Direct
+                 * @var WP_Filesystem_Direct
                  */
                 $fs = $fs;
                 $fs->chmod($contentPath, \constant('FS_CHMOD_FILE'));
             });
-            // ...or switching from free version to PRO version
-            $this->getBuilder()->ensureAnonymousFolder(\false);
         }
-        return $contentUrl . \substr($contentPath, \strlen($contentDir));
+        $src = Utils::toUploadsUrl($contentPath);
+        return $src === \false ? '' : $src;
     }
     /**
      * Modify CData script tag.
@@ -151,8 +118,7 @@ class DeliverAnonymousAsset
      */
     public function attribute_escape($safe_text)
     {
-        if ($safe_text === $this->getHandle()) {
-            // Backtrace to detect only changes in `print_extra_script`
+        if ($safe_text === $this->handle) {
             // phpcs:disable
             $backtrace = @\debug_backtrace();
             // phpcs:enable
@@ -172,36 +138,30 @@ class DeliverAnonymousAsset
      */
     public function script_loader_tag($tag, $handle)
     {
-        if ($handle === $this->getHandle()) {
-            return \str_replace("id='" . $this->getHandle() . "-js'", '', $tag);
+        $isLocalizeResourceHandle = \strpos($handle, $this->handle . '-localize-') === 0;
+        if ($handle === $this->handle || $isLocalizeResourceHandle) {
+            // WordPress may render attributes with single or double quotes.
+            return \preg_replace('/\\s+id=(["\'])' . \preg_quote($handle . '-js', '/') . '\\1/', '', $tag);
         }
         return $tag;
     }
     /**
-     * Getter.
+     * Remove `id` from inline script attributes for the base and localize resource handles.
      *
-     * @codeCoverageIgnore
+     * @param array<string, string|bool> $attributes
+     * @return array<string, string|bool>
      */
-    public function getBuilder()
+    public function wp_inline_script_attributes($attributes)
     {
-        return $this->builder;
-    }
-    /**
-     * Get handle.
-     *
-     * @codeCoverageIgnore
-     */
-    public function getHandle()
-    {
-        return $this->handle;
-    }
-    /**
-     * Get file.
-     *
-     * @codeCoverageIgnore
-     */
-    public function getFile()
-    {
-        return $this->file;
+        $id = isset($attributes['id']) && \is_string($attributes['id']) ? $attributes['id'] : '';
+        if ($id === '') {
+            return $attributes;
+        }
+        $isBaseInlineId = $id === $this->handle . '-js-before' || $id === $this->handle . '-js-after';
+        $isLocalizeInlineId = \strpos($id, $this->handle . '-localize-') === 0 && (\substr($id, -10) === '-js-before' || \substr($id, -9) === '-js-after');
+        if ($isBaseInlineId || $isLocalizeInlineId) {
+            unset($attributes['id']);
+        }
+        return $attributes;
     }
 }

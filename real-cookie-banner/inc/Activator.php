@@ -229,8 +229,9 @@ class Activator
         if ($errorlevel) {
             $wpdb->print_error();
         }
-        // wp_rcb_asset_seo_redirect (use own table name for backwards compatibility)
-        \DevOwl\RealCookieBanner\Core::getInstance()->getAnonymousAssetBuilder()->dbDelta($this);
+        // Tear down v1 anonymous-asset table/options; recopy current-bucket files after plugin updates
+        self::dropAnonymousAssetV1Artefacts();
+        \DevOwl\RealCookieBanner\Core::getInstance()->getAnonymousAssetBuilder()->forceRecreation();
         if ($errorlevel) {
             $wpdb->print_error();
         }
@@ -310,13 +311,24 @@ class Activator
         \wp_rcb_invalidate_templates_cache();
     }
     /**
+     * Drop leftover v1 anonymous-asset table and rotation options.
+     */
+    public static function dropAnonymousAssetV1Artefacts()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . RCB_DB_PREFIX . '_asset_seo_redirect';
+        // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $wpdb->query("DROP TABLE IF EXISTS {$table_name}");
+        // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        \delete_option(RCB_OPT_PREFIX . '-serve-hash');
+        \delete_option(RCB_OPT_PREFIX . '-serve-next-hash');
+    }
+    /**
      * Uninstall our plugin (it does currently not remove any settings!).
      */
     public static function uninstall()
     {
-        global $wpdb;
-        // Delete anonymous JavaScript files
-        $table_name = $wpdb->prefix . RCB_DB_PREFIX . '_' . AnonymousAssetBuilder::TABLE_NAME;
-        AnonymousAssetBuilder::uninstall($table_name);
+        AnonymousAssetBuilder::uninstall(RCB_SLUG_LITE);
+        self::dropAnonymousAssetV1Artefacts();
     }
 }

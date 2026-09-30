@@ -358,9 +358,14 @@ class Notices
         if (!General::getInstance()->isBannerActive()) {
             return null;
         }
+        if (\defined('RCB_SKIP_CHECK_SAVING_CONSENT_VIA_REST_API') && \constant('RCB_SKIP_CHECK_SAVING_CONSENT_VIA_REST_API')) {
+            return null;
+        }
         $result = $this->getStates()->get(self::NOTICE_CHECK_SAVING_CONSENT_VIA_REST_API_ENDPOINT_WORKING, \false);
         $checker = new SavingConsentViaRestApiEndpointChecker();
-        if ($checker->shouldInvalidate($result)) {
+        // WP-Cron and WP-CLI have no HTTP Basic Auth context; a loopback would 401
+        // behind directory protection and overwrite a previously successful cache.
+        if (!\wp_doing_cron() && !Utils::isCLI() && $checker->shouldInvalidate($result)) {
             // See https://github.com/WordPress/WordPress/blob/8fbd2fc6f40ea1f2ad746758b7111a66ab134e19/wp-admin/includes/class-wp-site-health.php#L2136-L2137
             $checker->setRequestArgument('sslverify', \apply_filters('https_local_ssl_verify', \false));
             $consentEndpoint = UtilsService::getNamespace($this) . '/consent';
@@ -382,6 +387,9 @@ class Notices
             }
             $result = $checker->teardown();
             $this->getStates()->set(self::NOTICE_CHECK_SAVING_CONSENT_VIA_REST_API_ENDPOINT_WORKING, $result);
+        }
+        if (!\is_array($result) || !isset($result['tests'])) {
+            return null;
         }
         $tests = $result['tests'];
         if (\count(Utils::array_flatten($tests)) > 0) {

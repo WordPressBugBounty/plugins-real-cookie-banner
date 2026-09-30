@@ -23,6 +23,7 @@ use DevOwl\RealCookieBanner\comp\migration\DashboardTileTcfV2IllegalUsage;
 use DevOwl\RealCookieBanner\comp\migration\DbConsentV2;
 use DevOwl\RealCookieBanner\comp\TemplatesPluginIntegrations;
 use DevOwl\RealCookieBanner\comp\ThirdPartyNotices;
+use DevOwl\RealCookieBanner\comp\WooCommerceScanner;
 use DevOwl\RealCookieBanner\lite\Core as LiteCore;
 use DevOwl\RealCookieBanner\lite\settings\TcfVendorConfiguration;
 use DevOwl\RealCookieBanner\lite\tcf\TcfVendorListNormalizer;
@@ -210,10 +211,13 @@ class Core extends BaseCore implements IOverrideCore
         (new FixInvalidJsonInDb())->fixMetadataBySingleMetaKey(Cookie::META_NAME_TECHNICAL_DEFINITIONS);
         // Official Consent API
         \add_filter('Consent/Block/HTML', [$this->getBlocker(), 'replace']);
+        // Before determine_current_user / Application Password auth (runs earlier than init).
+        \add_filter('application_password_is_api_request', [RestConsent::instance(), 'application_password_is_api_request'], 100);
         \add_action('http_api_debug', [$this->getNotices(), 'http_api_debug'], 10, 5);
         \add_action('init', [$templatesPluginIntegrations, 'init'], 0);
         \add_action('init', [ComingSoonPlugins::getInstance(), 'init'], 11);
         \add_action('init', [ThirdPartyNotices::getInstance(), 'init']);
+        \add_action('init', [WooCommerceScanner::getInstance(), 'init']);
         \add_action('init', [$this->getScanner(), 'probablyReduceCurrentUserPermissions'], 0);
         \add_action('init', [$this->getScanner(), 'outputBlogId'], 0);
         \add_action('init', [$this, 'registerPostTypes'], 0);
@@ -319,7 +323,9 @@ class Core extends BaseCore implements IOverrideCore
         $this->adInitiator->start();
         $this->rpmInitiator = new \DevOwl\RealCookieBanner\RpmInitiator();
         $this->rpmInitiator->start();
-        $this->anonymousAssetBuilder = new AnonymousAssetBuilder($this->getTableName(AnonymousAssetBuilder::TABLE_NAME), RCB_OPT_PREFIX, \trailingslashit(RCB_PATH) . $this->getAssets()->getPublicFolder());
+        $this->anonymousAssetBuilder = new AnonymousAssetBuilder(RCB_SLUG_LITE, \trailingslashit(RCB_PATH) . $this->getAssets()->getPublicFolder(), function ($path) {
+            return \plugins_url('public/' . \basename(\dirname($path)) . '/', RCB_FILE);
+        }, ['realCookieBanner', '__tcfapiLocator']);
         if ($this->isPro()) {
             $this->tcfVendorListNormalizer = new TcfVendorListNormalizer(RCB_DB_PREFIX, Service::getExternalContainerUrl('rcb') . '1.0.0/tcf/gvl/', $this->getCompLanguage());
         }

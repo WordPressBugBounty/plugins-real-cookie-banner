@@ -1,7 +1,7 @@
 === Real Cookie Banner: GDPR & ePrivacy Cookie Consent ===
 Contributors: devowl, mguenter, jankarres
 Tags: cookie banner, cookie plugin, cookie consent, gdpr, eprivacy
-Stable tag: 5.3.6
+Stable tag: 5.3.8
 Requires at least: 6.1
 Requires PHP: 7.4.0
 Tested up to: 7.1

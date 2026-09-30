@@ -267,6 +267,8 @@ class StandardPlugin extends AbstractPlugin
             'ThriveAppFront',
             // [Plugin Comp] https://wordpress.org/plugins/fluent-player/
             '/var fluent_player/',
+            // [Plugin Comp] Wordfence
+            'WordfenceLSI18nStrings',
         ]);
         /**
          * DoNotBlockScriptTextTemplates.
@@ -348,6 +350,8 @@ class StandardPlugin extends AbstractPlugin
         $scriptInlineJsonBlocker->addSchema('AysChatGPTChatSettings', '/(var\\s*AysChatGPTChatSettings[^=]+=)(.*)(;)$/ms');
         // [Plugin Comp] WP Travel Engine
         $scriptInlineJsonBlocker->addSchema('wtePreFetch', '/(window\\.wtePreFetch[^=]+=)(.*)(;)$/m');
+        // [Plugin Comp] https://www.semplice.com/
+        $scriptInlineJsonBlocker->addSchema('sempliceWp', '/(var\\s*sempliceWp[^=]+=)(.*)(;)$/m');
         $cb->addPlugin(Image::class);
         /**
          * Plugin.

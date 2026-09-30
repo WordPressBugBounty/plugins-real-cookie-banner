@@ -2,31 +2,49 @@
 
 namespace DevOwl\RealCookieBanner\Vendor\DevOwl\DeliverAnonymousAsset;
 
-use DevOwl\RealCookieBanner\Vendor\MatthiasWeb\Utils\Activator;
 use DevOwl\RealCookieBanner\Vendor\MatthiasWeb\Utils\Utils as UtilsUtils;
+use Throwable;
 use WP_Filesystem_Direct;
 /**
- * Use this to create your database tables and to create the instances
- * of `DeliverAnonymousAsset`.
+ * Create `DeliverAnonymousAsset` instances and own the uploads-scoped bucket lifecycle.
  * @internal
  */
 class AnonymousAssetBuilder
 {
-    const TABLE_NAME = 'asset_seo_redirect';
-    const OPTION_NAME_SERVE_HASH_SUFFIX = '-serve-hash';
-    const OPTION_NAME_SERVE_NEXT_HASH_SUFFIX = '-serve-next-hash';
-    const GENERATE_NEXT_HASH = 60 * 60 * 24 * 7;
-    const MAX_SEO_REDIRECTS = 4;
     const COPY_EXTENSIONS = ['js', 'css'];
-    private $table_name;
-    private $optionNamePrefix;
+    const BUCKET_INDEX_FILENAME = '.bucket-index';
+    /**
+     * Plugin slug mixed into the bucket hash so plugins do not share folders.
+     * Not used as a path segment — a slug in the URL is trivial to block.
+     *
+     * @var string
+     */
+    private $namespace;
     private $folder;
     /**
-     * Cache of `Utils::contentDir`.
+     * Optional sourceMappingURL directory resolver.
      *
-     * @var string|false `false` when folder is not writable
+     * @var callable|null
+     */
+    private $sourceMapBaseUrlResolver;
+    /**
+     * File-body markers for leftover v1 sweep.
+     *
+     * @var string[]
+     */
+    private $legacyCleanupMarkers;
+    /**
+     * Cache of `Utils::getUploadsRoot()`.
+     *
+     * @var string|false `false` when parent is not writable
      */
     private $contentDir;
+    /**
+     * Request-scoped: uploads/mkdir failed. Later `ready()` calls fail closed without retrying mkdir.
+     *
+     * @var bool
+     */
+    private $ensureFailed = \false;
     /**
      * The pool of collected built `DeliverAnonymousAsset` instances.
      *
@@ -34,17 +52,25 @@ class AnonymousAssetBuilder
      */
     private $pool = [];
     /**
+     * Localize-resource orchestration.
+     *
+     * @var LocalizeScriptResources|null
+     */
+    private $localizeScriptResources;
+    /**
      * C'tor.
      *
-     * @param string $table_name You can use it in conjunction with `TABLE_NAME` constant
-     * @param string $optionNamePrefix
+     * @param string $namespace Plugin slug, e.g. `real-cookie-banner`
      * @param string $folder The absolute path to your original files
+     * @param callable|null $sourceMapBaseUrlResolver `function (string $originalFilePath): string` URL prefix for `.map` files
+     * @param string[] $legacyCleanupMarkers Restrict leftover v1 deletion to files containing one of these substrings
      */
-    public function __construct($table_name, $optionNamePrefix, $folder)
+    public function __construct($namespace, $folder, $sourceMapBaseUrlResolver = null, $legacyCleanupMarkers = [])
     {
-        $this->table_name = $table_name;
-        $this->optionNamePrefix = $optionNamePrefix;
+        $this->namespace = $namespace;
         $this->folder = $folder;
+        $this->sourceMapBaseUrlResolver = $sourceMapBaseUrlResolver;
+        $this->legacyCleanupMarkers = $legacyCleanupMarkers;
     }
     /**
      * Get the URL to the anonymous folder.
@@ -52,9 +78,11 @@ class AnonymousAssetBuilder
     public function generateFolderSrc()
     {
         $anonymousFolder = $this->ensureAnonymousFolder(\true);
-        $contentDir = \wp_normalize_path(\constant('WP_CONTENT_DIR') . '/');
-        $contentUrl = Utils::getContentUrl();
-        return \trailingslashit($contentUrl . \substr($anonymousFolder, \strlen($contentDir)));
+        if ($anonymousFolder === \false) {
+            return '';
+        }
+        $url = Utils::toUploadsUrl($anonymousFolder);
+        return $url === \false ? '' : \trailingslashit($url);
     }
     /**
      * Create an anonymous asset. Do not forget to make it `->ready()` after you enqueued it!
@@ -81,170 +109,129 @@ class AnonymousAssetBuilder
     public function ready($id, $condition = \true)
     {
         if (isset($this->pool[$id]) && $condition) {
-            $instance = $this->pool[$id];
-            return $instance->ready();
+            return $this->pool[$id]->ready();
         }
         return \false;
     }
     /**
-     * Get the currently used hash.
+     * Active bucket id (10-char hex).
      */
     public function getHash()
     {
-        $option = \get_option($this->getOptionNamePrefix() . self::OPTION_NAME_SERVE_HASH_SUFFIX);
-        $next = \intval(\get_option($this->getOptionNamePrefix() . self::OPTION_NAME_SERVE_NEXT_HASH_SUFFIX));
-        if (empty($option) || $next === 0 || \time() > $next) {
-            $option = $this->updateHash();
-        }
-        return $option;
+        return Utils::getBucketId($this->namespace);
     }
     /**
-     * Create the anonymous folder in `wp-content`. It also uses the original folder path basename (e.g. `dist` or `dev`)
-     * as another subfolder, so it results in e.g. `/var/www/html/wp-content/7e9df1a92be399cb922305d5e7388ab1/dist/`.
+     * Create the anonymous folder under `uploads/<bucket-id>/<dist|dev>/`.
      *
      * @param boolean|null $skipExistenceCheck
      */
     public function ensureAnonymousFolder($skipExistenceCheck = null)
     {
-        $contentDir = $this->getContentDir();
-        if (!$contentDir) {
+        if ($this->ensureFailed) {
+            return \false;
+        }
+        if ($skipExistenceCheck === \true) {
+            $uploadsRoot = $this->getContentDir();
+            if (!$uploadsRoot) {
+                return \false;
+            }
+            return $uploadsRoot . $this->getHash() . '/' . \basename($this->folder) . '/';
+        }
+        $uploadsRoot = $this->ensureUploadsRoot();
+        if (!$uploadsRoot) {
+            $this->ensureFailed = \true;
             return \false;
         }
         $hash = $this->getHash();
-        $hashFolderPath = $contentDir . $hash . '/';
-        $folder = $hashFolderPath . \basename($this->getFolder()) . '/';
-        if ($skipExistenceCheck === \true) {
-            return $folder;
-        }
-        // Already exists?
+        $hashFolderPath = $uploadsRoot . $hash . '/';
+        $folder = $hashFolderPath . \basename($this->folder) . '/';
+        $bucketExisted = \is_dir($hashFolderPath);
         if ($skipExistenceCheck === null && \is_dir($folder)) {
             return \true;
         }
-        if (\wp_mkdir_p($folder)) {
-            // Create the anonymous files
-            require_once ABSPATH . 'wp-admin/includes/file.php';
-            // As we create the folder in `wp-content`, we could have wrong permission for the created
-            // anonymous folder due to `wp_mkdir_p()` as it inherits the `chmod` from the parent folder
-            UtilsUtils::runDirectFilesystem(function ($fs) use($hashFolderPath, $folder) {
+        if (!\wp_mkdir_p($folder)) {
+            $this->ensureFailed = \true;
+            return \false;
+        }
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        UtilsUtils::runDirectFilesystem(function ($fs) use($hashFolderPath, $folder) {
+            /**
+             * WP_Filesystem_Direct.
+             *
+             * @var WP_Filesystem_Direct
+             */
+            $fs = $fs;
+            $fs->chmod($hashFolderPath, \constant('FS_CHMOD_DIR'));
+            $fs->chmod($folder, \constant('FS_CHMOD_DIR'));
+        });
+        \file_put_contents($hashFolderPath . self::BUCKET_INDEX_FILENAME, (string) Utils::getBucketIndex());
+        $filesToCopy = \array_filter(\list_files($this->folder, 1), function ($file) {
+            $extension = \pathinfo($file, \PATHINFO_EXTENSION);
+            return \in_array($extension, self::COPY_EXTENSIONS, \true);
+        });
+        foreach ($filesToCopy as $fileToCopy) {
+            $filename = $folder . self::generateFilename($hash, $fileToCopy);
+            if (!Utils::writeFileCompletely($filename, Utils::readFileAndCorrectSourceMap($fileToCopy, $this->sourceMapBaseUrlResolver))) {
+                // On-demand copy retries later; skip chmod for failed writes.
+                continue;
+            }
+            UtilsUtils::runDirectFilesystem(function ($fs) use($filename) {
                 /**
                  * WP_Filesystem_Direct.
                  *
-                 *  @var WP_Filesystem_Direct
+                 * @var WP_Filesystem_Direct
                  */
                 $fs = $fs;
-                $fs->chmod($hashFolderPath, \constant('FS_CHMOD_DIR'));
-                $fs->chmod($folder, \constant('FS_CHMOD_DIR'));
+                $fs->chmod($filename, \constant('FS_CHMOD_FILE'));
             });
-            $filesToCopy = \array_filter(\list_files($this->getFolder(), 1), function ($file) {
-                $extension = \pathinfo($file, \PATHINFO_EXTENSION);
-                return \in_array($extension, self::COPY_EXTENSIONS, \true);
-            });
-            foreach ($filesToCopy as $fileToCopy) {
-                $filename = $folder . self::generateFilename($hash, $fileToCopy);
-                \file_put_contents($filename, Utils::readFileAndCorrectSourceMap($fileToCopy));
-                UtilsUtils::runDirectFilesystem(function ($fs) use($filename) {
-                    /**
-                     * WP_Filesystem_Direct.
-                     *
-                     *  @var WP_Filesystem_Direct
-                     */
-                    $fs = $fs;
-                    $fs->chmod($filename, \constant('FS_CHMOD_FILE'));
-                });
-            }
-            return \true;
         }
-        return \false;
+        if (!$bucketExisted) {
+            try {
+                LegacyLayoutCleanup::run($this->legacyCleanupMarkers);
+            } catch (Throwable $e) {
+                // Leftover sweep must not take down the site.
+            }
+            $this->purgeExpiredBuckets($uploadsRoot);
+        }
+        return \true;
     }
     /**
-     * Generate a new hash for the current served JS file.
-     */
-    protected function updateHash()
-    {
-        global $wpdb;
-        $hash = \md5(\wp_generate_uuid4());
-        \update_option($this->getOptionNamePrefix() . self::OPTION_NAME_SERVE_HASH_SUFFIX, $hash, \true);
-        \update_option($this->getOptionNamePrefix() . self::OPTION_NAME_SERVE_NEXT_HASH_SUFFIX, \time() + self::GENERATE_NEXT_HASH, \true);
-        // Save in history
-        $table_name = $this->getTableName();
-        $wpdb->insert($table_name, ['serve_hash' => $hash, 'created' => \current_time('mysql')]);
-        // Read all deleted hashes so `DeliverAnonymousAsset` can delete it
-        $sql = "SELECT serve_hash FROM {$table_name} WHERE id NOT IN (SELECT id FROM (SELECT id FROM {$table_name} ORDER BY id DESC LIMIT " . self::MAX_SEO_REDIRECTS . ') foo);';
-        // phpcs:disable WordPress.DB.PreparedSQL
-        $deletedHashes = $wpdb->get_col($sql);
-        // phpcs:enable WordPress.DB.PreparedSQL
-        // Only hold x SEO redirects (https://stackoverflow.com/a/578926/5506547)
-        $sql = "DELETE FROM {$table_name} WHERE id NOT IN (SELECT id FROM (SELECT id FROM {$table_name} ORDER BY id DESC LIMIT " . self::MAX_SEO_REDIRECTS . ') foo);';
-        // phpcs:disable WordPress.DB.PreparedSQL
-        $wpdb->query($sql);
-        // phpcs:enable WordPress.DB.PreparedSQL
-        // Unlink the old folder
-        $this->purgeHashes($this->getContentDir(), $deletedHashes);
-        /**
-         * The JavaScript and CSS files, which were previously anonymous, have been rotated and their hashes have been updated.
-         *
-         * @see https://devowl.io/knowledge-base/real-cookie-banner-javascript-files-in-wp-content/
-         * @hook DevOwl/DeliverAnonymousAsset/Update/$optionNamePrefix
-         * @param {string[]} $deletedHashes
-         * @param {AnonymousAssetBuilder} $builder
-         */
-        \do_action('DevOwl/DeliverAnonymousAsset/Update/' . $this->getOptionNamePrefix(), $deletedHashes, $this);
-        return $hash;
-    }
-    /**
-     * Make sure the database table is created.
-     *
-     * @param Activator $activator
-     */
-    public function dbDelta($activator)
-    {
-        $charset_collate = $activator->getCharsetCollate();
-        $table_name = $this->getTableName();
-        $sql = "CREATE TABLE {$table_name} (\n            id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,\n            serve_hash char(32) NOT NULL,\n            created datetime NOT NULL,\n            PRIMARY KEY  (id)\n        ) {$charset_collate};";
-        \dbDelta($sql);
-        // Force to update our assets cause updates can lead to new JavaScript files
-        $this->forceRecreation();
-    }
-    /**
-     * Force recreation of asset files.
+     * Recopy files in the current bucket (e.g. after a plugin update).
      */
     public function forceRecreation()
     {
-        \update_option($this->getOptionNamePrefix() . self::OPTION_NAME_SERVE_NEXT_HASH_SUFFIX, 0);
+        $this->ensureAnonymousFolder(\false);
     }
     /**
-     * Getter.
-     */
-    public function getTableName()
-    {
-        global $wpdb;
-        return empty($this->table_name) ? $wpdb->prefix . self::TABLE_NAME : $this->table_name;
-    }
-    /**
-     * Getter.
-     */
-    public function getFolder()
-    {
-        return $this->folder;
-    }
-    /**
-     * Getter.
+     * Uploads base directory, or false when not writable.
      */
     public function getContentDir()
     {
         if ($this->contentDir === null) {
-            $this->contentDir = Utils::getContentDir();
+            $this->contentDir = Utils::getUploadsRoot();
         }
         return $this->contentDir;
     }
     /**
-     * Getter.
+     * Rewrite sourceMappingURL in a copied file using the constructor resolver.
      *
-     * @codeCoverageIgnore
+     * @param string $path
      */
-    public function getOptionNamePrefix()
+    public function readFileAndCorrectSourceMap($path)
     {
-        return $this->optionNamePrefix;
+        return Utils::readFileAndCorrectSourceMap($path, $this->sourceMapBaseUrlResolver);
+    }
+    /**
+     * Localize-resource orchestration for this builder.
+     *
+     * @return LocalizeScriptResources
+     */
+    public function getLocalizeScriptResources()
+    {
+        if ($this->localizeScriptResources === null) {
+            $this->localizeScriptResources = new LocalizeScriptResources($this);
+        }
+        return $this->localizeScriptResources;
     }
     /**
      * Generate the filename for a given original filename.
@@ -259,37 +246,108 @@ class AnonymousAssetBuilder
         return UtilsUtils::simpleHash($hash . $basename) . '.' . $extension;
     }
     /**
-     * Hashes got rotated and we can delete old folders from the filesystem.
+     * Remove this plugin's buckets under `uploads/`. Use this in `uninstall.php`.
      *
-     * @param string $contentDir
-     * @param string[] $hashes
+     * @param string $namespace Plugin slug passed to the constructor
      */
-    public static function purgeHashes($contentDir, $hashes)
+    public static function uninstall($namespace)
     {
-        if ($contentDir !== \false) {
-            UtilsUtils::runDirectFilesystem(function ($fs) use($hashes, $contentDir) {
-                foreach ($hashes as $deletedHash) {
-                    $fs->rmdir($contentDir . $deletedHash, \true);
-                }
-            });
+        $uploadsRoot = Utils::getUploadsRoot();
+        if ($uploadsRoot === \false || !\is_dir($uploadsRoot)) {
+            return;
+        }
+        foreach (self::listHexBucketDirs($uploadsRoot) as $path) {
+            $name = \basename($path);
+            if (self::ownedBucketIndex(\trailingslashit($path), $name, $namespace) !== \false) {
+                self::rmdir($path);
+            }
         }
     }
     /**
-     * Remove the files from filesystem. Use this function in your `uninstall.php`.
+     * Uploads root must be writable. WordPress already created it.
      *
-     * @param string $table_name
+     * @return string|false
      */
-    public static function uninstall($table_name)
+    protected function ensureUploadsRoot()
     {
-        global $wpdb;
-        $contentDir = Utils::getContentDir();
-        if (!$contentDir) {
-            return;
+        $uploadsRoot = $this->getContentDir();
+        if (!$uploadsRoot || !\wp_is_writable($uploadsRoot)) {
+            return \false;
         }
-        $sql = "SELECT serve_hash FROM {$table_name}";
-        // phpcs:disable WordPress.DB.PreparedSQL
-        $hashes = $wpdb->get_col($sql);
-        // phpcs:enable WordPress.DB.PreparedSQL
-        self::purgeHashes($contentDir, $hashes);
+        return $uploadsRoot;
+    }
+    /**
+     * Delete this plugin's buckets older than current + previous. Never delete `uploads/` itself.
+     *
+     * @param string $uploadsRoot
+     */
+    protected function purgeExpiredBuckets($uploadsRoot)
+    {
+        $current = Utils::getBucketIndex();
+        foreach (self::listHexBucketDirs($uploadsRoot) as $path) {
+            $name = \basename($path);
+            $index = self::ownedBucketIndex(\trailingslashit($path), $name, $this->namespace);
+            if ($index === \false || $index >= $current - 1) {
+                continue;
+            }
+            self::rmdir($path);
+        }
+    }
+    /**
+     * Depth-1 `uploads/<10-hex>/` directories only. Does not recurse into year/month media trees.
+     *
+     * @param string $uploadsRoot
+     * @return string[]
+     */
+    private static function listHexBucketDirs($uploadsRoot)
+    {
+        $dirs = \glob($uploadsRoot . \str_repeat('[a-f0-9]', Utils::FINGERPRINT_LENGTH), \GLOB_ONLYDIR);
+        if (!\is_array($dirs)) {
+            return [];
+        }
+        $out = [];
+        foreach ($dirs as $path) {
+            if (!\is_link($path)) {
+                $out[] = $path;
+            }
+        }
+        return $out;
+    }
+    /**
+     * Sidecar index when `$name` is this plugin's bucket, otherwise false.
+     *
+     * @param string $bucketDir
+     * @param string $name
+     * @param string $namespace
+     * @return int|false
+     */
+    private static function ownedBucketIndex($bucketDir, $name, $namespace)
+    {
+        $sidecar = $bucketDir . self::BUCKET_INDEX_FILENAME;
+        if (!\is_readable($sidecar)) {
+            return \false;
+        }
+        $index = \intval(\file_get_contents($sidecar));
+        if ($name !== Utils::getBucketId($namespace, $index)) {
+            return \false;
+        }
+        return $index;
+    }
+    /**
+     * Recursively remove a directory via WP_Filesystem_Direct.
+     *
+     * @param string $path
+     */
+    private static function rmdir($path)
+    {
+        UtilsUtils::runDirectFilesystem(function ($fs) use($path) {
+            /**
+             * WP_Filesystem_Direct.
+             *
+             * @var WP_Filesystem_Direct
+             */
+            $fs = $fs;
+            $fs->rmdir($path, \true);
+        });
     }
 }

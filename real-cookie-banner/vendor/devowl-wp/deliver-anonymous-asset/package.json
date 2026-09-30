@@ -1,6 +1,6 @@
 {
     "name": "@devowl-wp/deliver-anonymous-asset",
-    "version": "1.0.60",
+    "version": "1.0.62",
     "private": true,
     "description": "Provide a functionality to deliver assets anonymous",
     "homepage": "https://devowl.io",
@@ -8,7 +8,7 @@
     "author": "DevOwl",
     "sideEffects": [
         "**/*.{css,scss,less}",
-        "./src/public/ts/*.tsx"
+        "./lib/*.tsx"
     ],
     "type": "module",
     "exports": {
@@ -34,8 +34,14 @@
         "lint:eslint": "dowl --silent task @devowl-wp/eslint-config",
         "lint:phpcs": "dowl --silent task @devowl-wp/phpcs-config",
         "task": "task --taskfile ./tasks/Taskfile.yml",
+        "test:phpunit": "dowl --silent task @devowl-wp/phpunit-config",
+        "test:phpunit:coverage": "dowl --silent task @devowl-wp/phpunit-config:coverage",
+        "test:phpunit:profile": "dowl --silent task @devowl-wp/phpunit-config:profile",
         "wp": "$(which wp)$(test $CI && echo ' --allow-root')",
         "wp:weak": "php -n -dextension=phar.so -dextension=json.so -dextension=mbstring.so -dextension=tokenizer.so -dmemory_limit=-1 $(which wp)$(test $CI && echo ' --allow-root')"
+    },
+    "config": {
+        "phpunit-coverage-threshold": 1
     },
     "browserslist": [
         "defaults",
@@ -50,6 +56,7 @@
         "@devowl-wp/node-gitlab-ci": "workspace:*",
         "@devowl-wp/npm-licenses": "workspace:*",
         "@devowl-wp/phpcs-config": "workspace:*",
+        "@devowl-wp/phpunit-config": "workspace:*",
         "@devowl-wp/ts-config": "workspace:*",
         "@devowl-wp/utils": "workspace:*",
         "@devowl-wp/webpack-config": "workspace:*",

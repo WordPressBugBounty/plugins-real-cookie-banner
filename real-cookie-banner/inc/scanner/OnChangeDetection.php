@@ -107,6 +107,17 @@ class OnChangeDetection
      */
     protected function fromPost($post)
     {
+        /**
+         * Allow skipping automatic rescans for post saves that do not affect cookie-relevant output.
+         *
+         * @hook RCB/Scanner/OnChangeDetection/Skip
+         * @param {boolean} $skip
+         * @param {WP_Post} $post
+         * @since 5.3.1
+         */
+        if (\apply_filters('RCB/Scanner/OnChangeDetection/Skip', \false, $post)) {
+            return;
+        }
         if (\is_post_type_viewable($post->post_type)) {
             $link = $this->getPermalink($post);
             if (!empty($link)) {
