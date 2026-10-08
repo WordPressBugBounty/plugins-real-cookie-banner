@@ -176,7 +176,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ### devowl-wp/real-utils (Version dev-wordpress | no sha)
-Create cross-selling ads, about page, rating and newsletter input for WP Real plugins.
+Create about page, rating and newsletter input for WP Real plugins.
 Homepage: Not configured.
 Licenses Used: GPL-3.0-or-later
 Create about page, rating and newsletter input for WP Real plugins.

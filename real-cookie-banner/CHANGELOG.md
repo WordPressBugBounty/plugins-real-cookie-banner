@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.10 (2026-10-08)
+
+
+### Bug Fixes
+
+* keep page-specific localize data out of content-hashed assets (CU-869em5f1b)
+
+
+<details><summary>Dependency updates @devowl-wp/deliver-anonymous-asset 1.0.63</summary>
+
+
+**_Purpose of dependency:_** _Provide a functionality to deliver assets anonymous_
+##### Bug Fixes
+
+* keep page-specific localize data out of content-hashed assets (CU-869em5f1b)
+* prefix anonymous localize bucket key on window (CU-869em5f1b)</details>
+
+<details><summary>Development dependency update @devowl-wp/api 1.14.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Features
+
+* extend Zod with OpenAPI and document MQueue group-retry overtake (CU-869c8tj4a)</details>
+
+
+
+
+
+## 5.3.9 (2026-09-30) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+
+### Performance Improvements
+
+* skip redundant WP plugin activate and login in smoke suite (CU-869f7c5ad)
+
+
+
+
+
+
+
 ## 5.3.8 (2026-09-29)
 
 

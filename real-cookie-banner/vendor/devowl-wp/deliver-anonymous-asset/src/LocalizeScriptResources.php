@@ -38,7 +38,8 @@ class LocalizeScriptResources
      * - `strategy` — `'defer'` emits a separate `<script src>`, `'lazy'` loads on demand via `.fetch()`.
      * - `required` — If `true`, returns `false` when the path resolves to `null` (default `false`).
      * - `include`  — Whitelist of top-level keys (or `key[].nested` paths) to extract into the resource file.
-     * - `exclude`  — Keys to keep in the inline script and omit from the resource file (e.g. per-request values).
+     * - `exclude`  — Top-level keys or dotted paths to keep in the inline script and omit from the
+     *                resource file (e.g. `'pageRequestUuid4'`, `'frontend.languageSwitcher'`).
      *
      * @param string $handle
      * @param string $objectName
@@ -91,7 +92,7 @@ class LocalizeScriptResources
         }
         $inline = $this->buildInlineBootstrapScript($bucketId, $objectName, $l10n, $manifest);
         // Attach bootstrap to the first resource handle so the execution order is:
-        // 1. Inline bootstrap (sets window[bucket] with base payload)
+        // 1. Inline bootstrap (sets window["_"+bucket] with base payload)
         // 2. Resource scripts (merge their extracted data into the existing object)
         // 3. Main handle (the application entry point)
         if (\count($enqueued) > 0) {
@@ -166,12 +167,13 @@ class LocalizeScriptResources
          *         });
          *         return inFlight[groupName];
          *     };
-         *     window[bucketId] = payload;
+         *     // "_" prefix: all-digit bucket ids are Window index properties and cannot be set.
+         *     window["_" + bucketId] = payload;
          *     try { window[publicName] = payload; } catch (e) {}
          * })(bucketId, objectName, payload);
          */
         return <<<JS
-(function(b,n,p){var f={};p.fetch=function(g){var r=(p.__resources||{})[g];if(!r){return Promise.reject(new Error("unknown resource group: "+g));}if(r.strategy!=="lazy"){return Promise.resolve(p);}if(f[g]){return f[g];}f[g]=new Promise(function(ok,no){var s=document.createElement("script");s.src=r.url;s.onload=function(){ok(p)};s.onerror=no;document.head.appendChild(s)});return f[g];};p.__m=function m(t,s){if(Array.isArray(t)&&Array.isArray(s)){for(var i=0;i<s.length;i++)t[i]=t[i]&&s[i]&&typeof t[i]==="object"&&typeof s[i]==="object"?m(t[i],s[i]):s[i];return t}for(var k in s){var a=t[k],c=s[k];t[k]=a&&c&&typeof a==="object"&&typeof c==="object"?m(a,c):c}return t};window[b]=p;try{window[n]=p;}catch(e){}})({$bucket},{$name},{$payload});
+(function(b,n,p){var f={};p.fetch=function(g){var r=(p.__resources||{})[g];if(!r){return Promise.reject(new Error("unknown resource group: "+g));}if(r.strategy!=="lazy"){return Promise.resolve(p);}if(f[g]){return f[g];}f[g]=new Promise(function(ok,no){var s=document.createElement("script");s.src=r.url;s.onload=function(){ok(p)};s.onerror=no;document.head.appendChild(s)});return f[g];};p.__m=function m(t,s){if(Array.isArray(t)&&Array.isArray(s)){for(var i=0;i<s.length;i++)t[i]=t[i]&&s[i]&&typeof t[i]==="object"&&typeof s[i]==="object"?m(t[i],s[i]):s[i];return t}for(var k in s){var a=t[k],c=s[k];t[k]=a&&c&&typeof a==="object"&&typeof c==="object"?m(a,c):c}return t};window["_"+b]=p;try{window[n]=p;}catch(e){}})({$bucket},{$name},{$payload});
 JS;
     }
     /**

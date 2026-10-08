@@ -88,7 +88,22 @@ class LocalizeResourceGroup
         }
         $payload = $this->applyIncludeExclude($value);
         // Keep excluded (or non-included) keys in $l10n so they remain in the inline script.
-        $remainder = \is_array($value) ? \array_diff_key($value, $payload) : null;
+        $remainder = \is_array($value) ? \array_diff_key($value, \is_array($payload) ? $payload : []) : [];
+        if (\is_array($value)) {
+            foreach ($this->exclude as $path) {
+                if (\strpos($path, '.') === \false) {
+                    continue;
+                }
+                $cursor = $value;
+                foreach (\explode('.', $path) as $segment) {
+                    if (!\is_array($cursor) || !\array_key_exists($segment, $cursor)) {
+                        continue 2;
+                    }
+                    $cursor = $cursor[$segment];
+                }
+                $this->setValueByPath($remainder, $path, $cursor);
+            }
+        }
         if (!empty($remainder)) {
             $this->setValueByPath($l10n, $this->path, $remainder);
         } else {
@@ -111,9 +126,9 @@ class LocalizeResourceGroup
         $json = $this->jsonEncode($payload);
         $init = $this->ensureIntermediatePathJs('o', $this->path);
         if ($init === '') {
-            return \sprintf('(function(b){var o=window[b],m=o.__m,e=%s,d=%s;%s=typeof e==="object"&&e?m(e,d):d;})(%s);', $target, $json, $target, $this->jsonEncode($bucketId));
+            return \sprintf('(function(b){var o=window["_"+b],m=o.__m,e=%s,d=%s;%s=typeof e==="object"&&e?m(e,d):d;})(%s);', $target, $json, $target, $this->jsonEncode($bucketId));
         }
-        return \sprintf('(function(b){var o=window[b],m=o.__m;%svar e=%s,d=%s;%s=typeof e==="object"&&e?m(e,d):d;})(%s);', $init, $target, $json, $target, $this->jsonEncode($bucketId));
+        return \sprintf('(function(b){var o=window["_"+b],m=o.__m;%svar e=%s,d=%s;%s=typeof e==="object"&&e?m(e,d):d;})(%s);', $init, $target, $json, $target, $this->jsonEncode($bucketId));
     }
     /**
      * `others.items[].purpose` → path `others.items` + include `purpose`.
@@ -236,7 +251,7 @@ class LocalizeResourceGroup
             $this->insertTrie($trie, $assignment['keys'], $assignment['value']);
         }
         $pathInit = $this->ensurePathJs('o', $this->path);
-        $decls = ['o=window[b]'];
+        $decls = ['o=window["_"+b]'];
         $stmts = '';
         $aliasIndex = 0;
         $this->emitCompressedTrie($trie, $this->toJsAccessor('o', $this->path), $decls, $stmts, $aliasIndex);
@@ -409,6 +424,7 @@ class LocalizeResourceGroup
     }
     /**
      * Applies include/exclude filtering to extracted payloads.
+     * `exclude` accepts top-level keys or dotted paths (e.g. `frontend.languageSwitcher`).
      *
      * @param mixed $value
      * @return mixed
@@ -428,7 +444,23 @@ class LocalizeResourceGroup
             }
         }
         foreach ($this->exclude as $key) {
-            unset($filtered[$key]);
+            if (\strpos($key, '.') === \false) {
+                unset($filtered[$key]);
+                continue;
+            }
+            // Detach shared ancestors so unset does not mutate `$l10n`.
+            $cursor =& $filtered;
+            $segments = \explode('.', $key);
+            $last = \array_pop($segments);
+            foreach ($segments as $segment) {
+                if (!\is_array($cursor) || !\array_key_exists($segment, $cursor) || !\is_array($cursor[$segment])) {
+                    unset($cursor);
+                    continue 2;
+                }
+                $cursor[$segment] = $cursor[$segment];
+                $cursor =& $cursor[$segment];
+            }
+            unset($cursor[$last], $cursor);
         }
         return $filtered;
     }

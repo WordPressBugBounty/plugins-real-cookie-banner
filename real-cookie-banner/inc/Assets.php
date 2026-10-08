@@ -223,7 +223,14 @@ class Assets
                               'frontend.groups[].items[].isEmbeddingOnlyExternalResources',
                           ],
                       ],*/
-                    'others' => ['path' => 'others', 'strategy' => 'defer', 'required' => \true, 'exclude' => ['pageRequestUuid4']],
+                    'others' => [
+                        'path' => 'others',
+                        'strategy' => 'defer',
+                        'required' => \true,
+                        // Page-specific values must stay inline — hashing them creates extra
+                        // content-addressed files (and never purges inside the bucket).
+                        'exclude' => ['pageRequestUuid4', 'frontend.languageSwitcher', 'isPreventPreDecision', 'isInvalidateImplicitUserConsent'],
+                    ],
                 ]);
                 if ($deferHandles !== \false) {
                     $usedResourceGroups = \true;
