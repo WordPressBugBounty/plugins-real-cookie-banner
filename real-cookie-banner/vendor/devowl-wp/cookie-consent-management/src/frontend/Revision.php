@@ -281,6 +281,9 @@ class Revision
         foreach (\array_keys($output) as $key) {
             $output[$key] = (object) $output[$key];
         }
+        // IAB Europe requires resurfacing on a policy version bump; `tcfMetadata` (independent) does not resurface
+        list(, $tcfPolicyVersion) = $gvl->getLatestVersions();
+        $output['tcfPolicyVersion'] = $tcfPolicyVersion;
         return $output;
     }
     /**

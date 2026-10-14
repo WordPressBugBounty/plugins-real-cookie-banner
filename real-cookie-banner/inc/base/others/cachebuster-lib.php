@@ -1,11 +1,11 @@
 <?php
-// Cachebusters generated on 2026-10-08 06:41:05
+// Cachebusters generated on 2026-10-14 10:45:52
 return [
 	'@ant-design/icons' => '6.2.5',
 	'@antv/g2' => '5.2.1',
-	'@iabtechlabtcf/cmpapi' => '1.5.20',
-	'@iabtechlabtcf/core' => '1.5.20',
-	'@iabtechlabtcf/stub' => '1.5.20',
+	'@iabtechlabtcf/cmpapi' => '1.5.22',
+	'@iabtechlabtcf/core' => '1.5.22',
+	'@iabtechlabtcf/stub' => '1.5.22',
 	'@remix-run/router' => '1.23.0',
 	'animate.css' => '4.1.1',
 	'antd' => '6.3.7',

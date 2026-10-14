@@ -229,7 +229,9 @@ class Assets
                         'required' => \true,
                         // Page-specific values must stay inline — hashing them creates extra
                         // content-addressed files (and never purges inside the bucket).
-                        'exclude' => ['pageRequestUuid4', 'frontend.languageSwitcher', 'isPreventPreDecision', 'isInvalidateImplicitUserConsent'],
+                        // activeLanguages: WPML's wpml_active_languages defaults to skip_missing,
+                        // so the list follows the current page's translation coverage.
+                        'exclude' => ['pageRequestUuid4', 'frontend.languageSwitcher', 'activeLanguages', 'isPreventPreDecision', 'isInvalidateImplicitUserConsent'],
                     ],
                 ]);
                 if ($deferHandles !== \false) {
@@ -489,6 +491,7 @@ class Assets
             'description' => \_x('Description', 'legal-text', 'real-cookie-banner'),
             'optOut' => \_x('Opt-out', 'legal-text', 'real-cookie-banner'),
             'optOutDesc' => \_x('Cookie can be set to store opt-out of the described behaviour.', 'legal-text', 'real-cookie-banner'),
+            'notUsedForTcfPurposes' => \_x('Not used for TCF purposes', 'legal-text', 'real-cookie-banner'),
             'headerTitlePrivacyPolicyHistory' => \_x('History of your privacy settings', 'legal-text', 'real-cookie-banner'),
             'skipToConsentChoices' => \_x('Skip to consent choices', 'legal-text', 'real-cookie-banner'),
             'historyLabel' => \_x('Show consent from', 'legal-text', 'real-cookie-banner'),

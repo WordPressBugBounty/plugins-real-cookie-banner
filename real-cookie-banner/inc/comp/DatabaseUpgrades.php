@@ -89,6 +89,7 @@ class DatabaseUpgrades
         $result[] = $this->migration_86940n0a0();
         $result[] = $this->migration_86951yt9g();
         $result[] = $this->migration_22wkegu();
+        $result[] = $this->migration_869f82uke();
         // This should always be the last migration
         $result[] = $this->updateRealCookieBannerTechnicalDefinitions();
         (new DbConsentV2())->probablyCreateJob();
@@ -668,6 +669,20 @@ class DatabaseUpgrades
             if ($count > 0) {
                 \wp_cache_delete('alloptions', 'options');
             }
+        }
+        return \false;
+    }
+    /**
+     * TCF 2.4 adds standard texts to the GVL. Download the GVL once after the update instead of waiting for the
+     * weekly update, which also rewrites device disclosures truncated by the former `text` column.
+     *
+     * @see https://app.clickup.com/t/869f82uke
+     */
+    protected function migration_869f82uke()
+    {
+        if (Core::versionCompareOlderThan($this->installed, '5.3.9', ['5.4.0']) && $this->isPro()) {
+            \update_option(TCF::OPTION_TCF_GVL_NEXT_DOWNLOAD_TIME, '');
+            return \true;
         }
         return \false;
     }

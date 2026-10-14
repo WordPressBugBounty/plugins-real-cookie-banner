@@ -1,6 +1,6 @@
 {
     "name": "@devowl-wp/real-queue",
-    "version": "1.1.38",
+    "version": "1.1.39",
     "private": true,
     "description": "Provide a promise-based queue system working in frontend for client and server tasks",
     "homepage": "https://devowl.io",
@@ -105,7 +105,7 @@
             "es_VE": false,
             "da_DK": "da",
             "sv_SE": "sv",
-            "nb_NO": "nb_NO",
+            "nb_NO": "nb",
             "cs_CZ": "cs",
             "pt_PT": "pt@formal",
             "pt_BR": false,
@@ -128,7 +128,7 @@
             "es@formal": 100,
             "da": 100,
             "sv": 100,
-            "nb_NO": 100,
+            "nb": 100,
             "cs": 100,
             "pt@formal": 100,
             "hu": 100,
@@ -164,7 +164,7 @@
             "sv": [
                 "deepl"
             ],
-            "nb_NO": [
+            "nb": [
                 "deepl"
             ],
             "cs": [

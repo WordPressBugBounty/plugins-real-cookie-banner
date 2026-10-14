@@ -1,6 +1,6 @@
 {
     "name": "@devowl-wp/multilingual",
-    "version": "1.14.39",
+    "version": "1.14.40",
     "private": true,
     "description": "Provide helper functionality for multilingual plugins like WPML and PolyLang",
     "homepage": "https://devowl.io",
@@ -92,7 +92,7 @@
             "es_VE": false,
             "da_DK": "da",
             "sv_SE": "sv",
-            "nb_NO": "nb_NO",
+            "nb_NO": "nb",
             "cs_CZ": "cs",
             "pt_PT": "pt@formal",
             "pt_BR": false,
@@ -115,7 +115,7 @@
             "es@formal": 100,
             "da": 100,
             "sv": 100,
-            "nb_NO": 100,
+            "nb": 100,
             "cs": 100,
             "pt@formal": 100,
             "hu": 100,
@@ -151,7 +151,7 @@
             "sv": [
                 "deepl"
             ],
-            "nb_NO": [
+            "nb": [
                 "deepl"
             ],
             "cs": [

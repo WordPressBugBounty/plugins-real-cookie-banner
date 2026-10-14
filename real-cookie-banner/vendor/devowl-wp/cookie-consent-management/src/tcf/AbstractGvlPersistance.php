@@ -27,6 +27,10 @@ abstract class AbstractGvlPersistance
      * current language. If the language does not exist for the current TCF version, let's
      * fallback to the default TCF version.
      *
+     * The result additionally contains `standardTexts` (e.g. `['features' => '...']`, mirrors `standardTexts` of the
+     * IAB `Declarations`) when the GVL provides standard texts for the requested or the default language. It is not a
+     * declaration type: iterate `StackCalculator::DECLARATION_TYPES` to process declarations.
+     *
      * Additional arguments:
      * - [`onlyReturnDeclarations`]: (boolean) Default to `false`, do not populate `gvlSpecificationVersion`, ...
      *

@@ -3,6 +3,138 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 5.4.0 (2026-10-14)
+
+
+### Bug Fixes
+
+* complete service scanner jobs for non-HTML sitemap URLs like KML (CU-869fgg2kf)
+* escape TCF vendor data in the cookie banner and cookie policy (CU-869f82uke)
+* exclude activeLanguages from content-hashed localize assets (CU-869em5f1b)
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)
+
+
+### Documentation
+
+* add conception for TCF 2.4 support in Real Cookie Banner (CU-869f82uke)
+* update the TCF 2.4 conception after the implementation (CU-869f82uke)
+
+
+### Features
+
+* support IAB TCF 2.4 with the feature standard text and labels for cookies without TCF purpose (CU-869f82uke)
+
+
+<details><summary>Dependency updates @devowl-wp/api-real-cookie-banner 1.5.7</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Real Cookie Banner backend._
+##### Bug Fixes
+
+* keep TCF device disclosures with cookies without TCF purpose and special purposes (CU-869f82uke)</details>
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-management 1.1.0</summary>
+
+
+**_Purpose of dependency:_** _Provide cookie consent management with adapters to your environment_
+##### Bug Fixes
+
+* escape TCF vendor data in the cookie banner and cookie policy (CU-869f82uke)
+
+
+##### Features
+
+* support IAB TCF 2.4 with the feature standard text and labels for cookies without TCF purpose (CU-869f82uke)</details>
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-web-client 1.1.0</summary>
+
+
+**_Purpose of dependency:_** _Apply cookies consent (opt-in, opt-out) to the current webpage._
+##### Features
+
+* support IAB TCF 2.4 with the feature standard text and labels for cookies without TCF purpose (CU-869f82uke)</details>
+
+<details><summary>Dependency updates @devowl-wp/customize 1.13.39</summary>
+
+
+**_Purpose of dependency:_** _Abstract utility for live preview (customize)_
+##### Bug Fixes
+
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-unblocker 1.3.13</summary>
+
+
+**_Purpose of dependency:_** _Unblock mechanism for @devowl-wp/headless-content-blocker with visual capabilities._
+##### Bug Fixes
+
+* restore Vimeo fullscreen after consent by dropping iframe location.replace (CU-869fey8e3)</details>
+
+<details><summary>Dependency updates @devowl-wp/multilingual 1.14.40</summary>
+
+
+**_Purpose of dependency:_** _Provide helper functionality for multilingual plugins like WPML and PolyLang_
+##### Bug Fixes
+
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner 1.2.0</summary>
+
+
+**_Purpose of dependency:_** _Provide UI for a cookie banner and content blocker for multiple services._
+##### Bug Fixes
+
+* escape TCF vendor data in the cookie banner and cookie policy (CU-869f82uke)
+
+
+##### Features
+
+* support IAB TCF 2.4 with the feature standard text and labels for cookies without TCF purpose (CU-869f82uke)</details>
+
+<details><summary>Dependency updates @devowl-wp/react-cookie-banner-admin 1.2.0</summary>
+
+
+**_Purpose of dependency:_** _Provide admin UI for a cookie banner and content blocker for multiple services._
+##### Features
+
+* support IAB TCF 2.4 with the feature standard text and labels for cookies without TCF purpose (CU-869f82uke)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-product-manager-wp-client 1.22.6</summary>
+
+
+**_Purpose of dependency:_** _A WordPress client for Real Product Manager_
+##### Bug Fixes
+
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-queue 1.1.39</summary>
+
+
+**_Purpose of dependency:_** _Provide a promise-based queue system working in frontend for client and server tasks_
+##### Bug Fixes
+
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-utils 1.14.40</summary>
+
+
+**_Purpose of dependency:_** _Create about page, rating and newsletter input for WP Real plugins._
+##### Bug Fixes
+
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.39</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Bug Fixes
+
+* use Weblate nb language code instead of nb_NO after 2026.10 (CU-31976hv)</details>
+
+
+
+
+
 ## 5.3.10 (2026-10-08)
 
 

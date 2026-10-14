@@ -195,25 +195,38 @@ class CookiePolicy
         }
         if ($settings->getTcf()->isActive()) {
             $gvl = $settings->getTcf()->getGvl();
-            $purposes = $gvl->allDeclarations(['onlyReturnDeclarations' => \true])['purposes'];
+            $declarations = $gvl->allDeclarations(['onlyReturnDeclarations' => \true]);
+            $purposes = $declarations['purposes'];
+            $specialPurposes = $declarations['specialPurposes'];
             $tcfVendorLabel = $columnLabels['tcfVendors'];
             $undefinedLabel = $columnLabels['undefined'];
+            // Disclosures are hosted by the vendor and must never be output as HTML
             foreach ($settings->getTcf()->getCookiePolicyVendorDisclosures() as $vendorRow) {
-                $vendorName = $vendorRow['name'];
+                $vendorName = \esc_html($vendorRow['name']);
                 foreach ($vendorRow['disclosures'] as $disclosure) {
                     $maxAgeSeconds = $disclosure['maxAgeSeconds'] ?? null;
-                    $domain = $disclosure['domain'] ?? $undefinedLabel;
+                    $domain = \esc_html($disclosure['domain'] ?? $undefinedLabel);
                     $domains = $disclosure['domains'] ?? null;
                     $table .= '<tr>';
                     $table .= \sprintf('<td>%s</td>', $tcfVendorLabel);
-                    $table .= \sprintf('<td><code>%s</code></td>', $disclosure['identifier'] ?? $undefinedLabel);
-                    $table .= \sprintf('<td><code>%s</code></td>', \is_array($domains) ? \join(', ', $domains) : $domain);
+                    $table .= \sprintf('<td><code>%s</code></td>', \esc_html($disclosure['identifier'] ?? $undefinedLabel));
+                    $table .= \sprintf('<td><code>%s</code></td>', \is_array($domains) ? \esc_html(\join(', ', $domains)) : $domain);
                     $table .= \sprintf('<td>%s</td>', $vendorName);
                     $table .= \sprintf('<td>%s</td>', $maxAgeSeconds === null ? $undefinedLabel : $this->getDurationText($maxAgeSeconds <= 0, \intval($maxAgeSeconds), 's'));
-                    $table .= \sprintf('<td>%s</td>', \ucfirst($disclosure['type'] ?? ''));
-                    $table .= \sprintf('<td>%s</td>', \join('; ', \array_map(function ($purposeId) use($purposes) {
-                        return isset($purposes[$purposeId]) ? $purposes[$purposeId]['name'] : '';
-                    }, $disclosure['purposes'] ?? [])));
+                    $table .= \sprintf('<td>%s</td>', \esc_html(\ucfirst($disclosure['type'] ?? '')));
+                    $specialPurposeIds = $disclosure['specialPurposes'] ?? [];
+                    $purposeNames = [];
+                    foreach ($disclosure['purposes'] as $purposeId) {
+                        if (isset($purposes[$purposeId])) {
+                            $purposeNames[] = \esc_html($purposes[$purposeId]['name']);
+                        }
+                    }
+                    foreach ($specialPurposeIds as $specialPurposeId) {
+                        if (isset($specialPurposes[$specialPurposeId])) {
+                            $purposeNames[] = \esc_html($specialPurposes[$specialPurposeId]['name']);
+                        }
+                    }
+                    $table .= \sprintf('<td>%s</td>', \count($disclosure['purposes']) + \count($specialPurposeIds) === 0 ? $columnLabels['notUsedForTcfPurposes'] : \join('; ', $purposeNames));
                     $table .= '</tr>';
                 }
             }
