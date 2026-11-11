@@ -14,6 +14,13 @@ abstract class AbstractMatch
 {
     const HTML_ATTRIBUTE_INVISIBLE_PREFIX = 'consent-attribute-invisible-';
     const HTML_ATTRIBUTE_INVISIBLE_LOCKED_ATTRIBUTE = 'locked-attribute';
+    /**
+     * Prefix of invisible attributes including the per-request marker token (see `FastHtmlTag::getMarkerToken`).
+     */
+    public static function getInvisibleAttributePrefix()
+    {
+        return self::HTML_ATTRIBUTE_INVISIBLE_PREFIX . FastHtmlTag::getMarkerToken() . '-';
+    }
     private $finder;
     private $originalMatch;
     private $tag;
@@ -215,7 +222,7 @@ abstract class AbstractMatch
      */
     public function hasInvisibleAttribute($key)
     {
-        $key = \sprintf('%s%s', self::HTML_ATTRIBUTE_INVISIBLE_PREFIX, $key);
+        $key = \sprintf('%s%s', self::getInvisibleAttributePrefix(), $key);
         return isset($this->attributes[$key]);
     }
     /**
@@ -276,7 +283,7 @@ abstract class AbstractMatch
     {
         // Use base64-encoded value so the removal of such attributes is much faster with preg_replace instead of
         // traversing the DOM again.
-        $this->setAttribute(\sprintf('%s%s', self::HTML_ATTRIBUTE_INVISIBLE_PREFIX, $key), $value === null ? null : \base64_encode(\json_encode(['val' => $value])));
+        $this->setAttribute(\sprintf('%s%s', self::getInvisibleAttributePrefix(), $key), $value === null ? null : \base64_encode(\json_encode(['val' => $value])));
     }
     /**
      * Get invisible attribute by key.
@@ -287,7 +294,7 @@ abstract class AbstractMatch
      */
     public function getInvisibleAttribute($key, $default = null)
     {
-        $result = $this->getAttribute(\sprintf('%s%s', self::HTML_ATTRIBUTE_INVISIBLE_PREFIX, $key), null);
+        $result = $this->getAttribute(\sprintf('%s%s', self::getInvisibleAttributePrefix(), $key), null);
         return $result === null ? $default : \json_decode(\base64_decode($result), ARRAY_A)['val'];
     }
     /**

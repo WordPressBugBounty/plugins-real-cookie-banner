@@ -90,6 +90,7 @@ class DatabaseUpgrades
         $result[] = $this->migration_86951yt9g();
         $result[] = $this->migration_22wkegu();
         $result[] = $this->migration_869f82uke();
+        $result[] = $this->migration_869fmjc08();
         // This should always be the last migration
         $result[] = $this->updateRealCookieBannerTechnicalDefinitions();
         (new DbConsentV2())->probablyCreateJob();
@@ -682,6 +683,36 @@ class DatabaseUpgrades
     {
         if (Core::versionCompareOlderThan($this->installed, '5.3.9', ['5.4.0']) && $this->isPro()) {
             \update_option(TCF::OPTION_TCF_GVL_NEXT_DOWNLOAD_TIME, '');
+            return \true;
+        }
+        return \false;
+    }
+    /**
+     * The cookie policy HTML is escaped more strictly (e.g. `&` becomes `&amp;`), which changes the revision hash
+     * although no setting changed. Do not show "Request new consent" for this, as it would ask all visitors again for
+     * nothing. A revision which also differs in any other way keeps the notice.
+     *
+     * @see https://app.clickup.com/t/869fmjc08
+     */
+    protected function migration_869fmjc08()
+    {
+        if (Core::versionCompareOlderThan($this->installed, '5.4.0', ['5.4.1', '5.5.0'])) {
+            // Lazy it, to be compatible with other plugins like WPML or PolyLang...
+            \add_action('init', function () {
+                $revision = Revision::getInstance();
+                $compLanguage = Core::getInstance()->getCompLanguage();
+                if ($compLanguage->isActive()) {
+                    // Every language has its own revision (context)
+                    $currentLanguage = $compLanguage->getCurrentLanguage();
+                    foreach ($compLanguage->getActiveLanguages() as $activeLanguage) {
+                        $compLanguage->switch($activeLanguage);
+                        $revision->dismissRetriggerCausedByCookiePolicyEncodingOnly();
+                    }
+                    $compLanguage->switch($currentLanguage);
+                } else {
+                    $revision->dismissRetriggerCausedByCookiePolicyEncodingOnly();
+                }
+            }, 20);
             return \true;
         }
         return \false;

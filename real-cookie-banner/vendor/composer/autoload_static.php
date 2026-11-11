@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit952f591b010f2bab40debe9421f04622
+class ComposerStaticInita5cf52e35be84786cea859a8aa1ca102
 {
     public static $files = array (
         '7aed44d824e149ce152c0fb82af9379a' => __DIR__ . '/..' . '/colinodell/json5/src/global.php',
@@ -12,6 +12,7 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
         'cd48e99dc39649f6529395d65373ee16' => __DIR__ . '/..' . '/devowl-wp/real-product-manager-wp-client/src/autoload.php',
         '3b53485dc9f3bb8dad60976677e215b5' => __DIR__ . '/..' . '/devowl-wp/real-queue/src/autoload.php',
         'b45694f813fe096b704a1908536cfec0' => __DIR__ . '/..' . '/devowl-wp/real-utils/src/autoload.php',
+        'ace6d88241f812b4accb2d847454aef6' => __DIR__ . '/..' . '/halaxa/json-machine/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -679,11 +680,14 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
         'DevOwl\\RealCookieBanner\\Vendor\\Embera\\Provider\\Zoomable' => __DIR__ . '/..' . '/mpratt/embera/src/Embera/Provider/Zoomable.php',
         'DevOwl\\RealCookieBanner\\Vendor\\Embera\\Provider\\iFixit' => __DIR__ . '/..' . '/mpratt/embera/src/Embera/Provider/iFixit.php',
         'DevOwl\\RealCookieBanner\\Vendor\\Embera\\Url' => __DIR__ . '/..' . '/mpratt/embera/src/Embera/Url.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\BadMethodCallException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/BadMethodCallException.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/InvalidArgumentException.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\JsonMachineException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/JsonMachineException.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/OutOfBoundsException.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\PathNotFoundException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/PathNotFoundException.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\SyntaxErrorException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/SyntaxErrorException.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Exception\\UnexpectedEndSyntaxErrorException' => __DIR__ . '/..' . '/halaxa/json-machine/src/Exception/UnexpectedEndSyntaxErrorException.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\FacadeTrait' => __DIR__ . '/..' . '/halaxa/json-machine/src/FacadeTrait.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\FileChunks' => __DIR__ . '/..' . '/halaxa/json-machine/src/FileChunks.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Items' => __DIR__ . '/..' . '/halaxa/json-machine/src/Items.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\ItemsOptions' => __DIR__ . '/..' . '/halaxa/json-machine/src/ItemsOptions.php',
@@ -693,9 +697,12 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\JsonDecoder\\InvalidResult' => __DIR__ . '/..' . '/halaxa/json-machine/src/JsonDecoder/InvalidResult.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\JsonDecoder\\ItemDecoder' => __DIR__ . '/..' . '/halaxa/json-machine/src/JsonDecoder/ItemDecoder.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\JsonDecoder\\PassThruDecoder' => __DIR__ . '/..' . '/halaxa/json-machine/src/JsonDecoder/PassThruDecoder.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\JsonDecoder\\StringOnlyDecoder' => __DIR__ . '/..' . '/halaxa/json-machine/src/JsonDecoder/StringOnlyDecoder.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\JsonDecoder\\ValidResult' => __DIR__ . '/..' . '/halaxa/json-machine/src/JsonDecoder/ValidResult.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Parser' => __DIR__ . '/..' . '/halaxa/json-machine/src/Parser.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\PositionAware' => __DIR__ . '/..' . '/halaxa/json-machine/src/PositionAware.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\RecursiveItems' => __DIR__ . '/..' . '/halaxa/json-machine/src/RecursiveItems.php',
+        'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\ResumableIteratorAggregateProxy' => __DIR__ . '/..' . '/halaxa/json-machine/src/ResumableIteratorAggregateProxy.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\StreamChunks' => __DIR__ . '/..' . '/halaxa/json-machine/src/StreamChunks.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\StringChunks' => __DIR__ . '/..' . '/halaxa/json-machine/src/StringChunks.php',
         'DevOwl\\RealCookieBanner\\Vendor\\JsonMachine\\Tokens' => __DIR__ . '/..' . '/halaxa/json-machine/src/Tokens.php',
@@ -886,9 +893,9 @@ class ComposerStaticInit952f591b010f2bab40debe9421f04622
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit952f591b010f2bab40debe9421f04622::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit952f591b010f2bab40debe9421f04622::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit952f591b010f2bab40debe9421f04622::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita5cf52e35be84786cea859a8aa1ca102::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita5cf52e35be84786cea859a8aa1ca102::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInita5cf52e35be84786cea859a8aa1ca102::$classMap;
 
         }, null, ClassLoader::class);
     }

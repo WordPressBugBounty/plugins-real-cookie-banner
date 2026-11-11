@@ -2,7 +2,6 @@
 
 namespace DevOwl\RealCookieBanner\Vendor\DevOwl\ServiceCloudConsumer\templates;
 
-use stdClass;
 /**
  * Service template.
  * @internal
@@ -40,9 +39,9 @@ class ServiceTemplate extends AbstractTemplate
      */
     public $provider;
     /**
-     * Provider contact (email, phone, link).
+     * Provider contact (phone, email, link).
      *
-     * @var stdClass
+     * @var array{phone: string, email: string, link: string}
      */
     public $providerContact;
     /**
@@ -227,10 +226,9 @@ class ServiceTemplate extends AbstractTemplate
             $this->isCdn = \boolval($arr['isCdn'] ?? null);
             $this->isProviderCurrentWebsite = \boolval($arr['isProviderCurrentWebsite'] ?? null);
             $this->provider = \is_string($arr['provider'] ?? null) ? $arr['provider'] : '';
-            $this->providerContact = \is_array($arr['providerContact'] ?? null) ? $arr['providerContact'] : new stdClass();
-            if (\is_array($this->providerContact) && \count($this->providerContact) === 0) {
-                $this->providerContact = new stdClass();
-            }
+            // Fixed keys so json_encode / toArray emit object-shaped JSON, never `[]`.
+            $defaults = ['phone' => '', 'email' => '', 'link' => ''];
+            $this->providerContact = \is_array($arr['providerContact'] ?? null) ? \array_merge($defaults, $arr['providerContact']) : $defaults;
             $this->providerNotice = \is_string($arr['providerNotice'] ?? null) ? $arr['providerNotice'] : '';
             $this->providerLegalNoticeUrl = \is_string($arr['providerLegalNoticeUrl'] ?? null) ? $arr['providerLegalNoticeUrl'] : '';
             $this->providerPrivacyPolicyUrl = \is_string($arr['providerPrivacyPolicyUrl'] ?? null) ? $arr['providerPrivacyPolicyUrl'] : '';

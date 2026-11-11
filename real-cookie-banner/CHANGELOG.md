@@ -3,6 +3,197 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.4.3 (2026-11-11)
+
+
+### Bug Fixes
+
+* bump json-machine to 1.2.6 for PHP 8.4+ nullable parameter types (CU-869fnmyzq)
+* do not block content in Tatsu Builder page builder (CU-869fpfvh7)
+* escape the cookie policy headings to prevent stored XSS (CU-869fmjevu)
+* honour bots accept-all setting on prevent-predecision pages (CU-869fnnkh4)
+* honour dismissed new consent notices of other languages on translation plugin sites (CU-869fmjevu)
+* keep providerContact as arrays to avoid PHP 8.5 ArrayIterator deprecation (CU-869fnmyzq)
+* keep the new consent notice for cookie policy edits beyond the escaped headings (CU-869fmjevu)
+* refresh websiteOperator in banner context after secondView fetch (CU-869em5f1b)
+* show only http(s) referers as links in the consent list (CU-869fmjevu)
+* skip TranslatePress translateArray during banner option autoload (CU-869fnp5kv)
+
+
+### Documentation
+
+* add security notices for the fixes in Real Cookie Banner 5.4.3 (CU-869fmjevu)
+
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-management 1.1.3</summary>
+
+
+**_Purpose of dependency:_** _Provide cookie consent management with adapters to your environment_
+##### Bug Fixes
+
+* escape the cookie policy headings to prevent stored XSS (CU-869fmjevu)
+* show only http(s) referers as links in the consent list (CU-869fmjevu)</details>
+
+<details><summary>Dependency updates @devowl-wp/cookie-consent-web-client 1.1.3</summary>
+
+
+**_Purpose of dependency:_** _Apply cookies consent (opt-in, opt-out) to the current webpage._
+##### Bug Fixes
+
+* honour bots accept-all setting on prevent-predecision pages (CU-869fnnkh4)</details>
+
+<details><summary>Dependency updates @devowl-wp/fast-html-tag 1.4.5</summary>
+
+
+**_Purpose of dependency:_** _Find tags within HTML content and modify it in speed of light_
+##### Bug Fixes
+
+* prevent stored XSS via forged content blocker markers in comments (CU-869fmjevu)</details>
+
+<details><summary>Dependency updates @devowl-wp/headless-content-blocker 1.4.20</summary>
+
+
+**_Purpose of dependency:_** _Block HTML content by URLs and selector syntax_
+##### Bug Fixes
+
+* prevent stored XSS via forged content blocker markers in comments (CU-869fmjevu)</details>
+
+<details><summary>Dependency updates @devowl-wp/multilingual 1.14.43</summary>
+
+
+**_Purpose of dependency:_** _Provide helper functionality for multilingual plugins like WPML and PolyLang_
+##### Bug Fixes
+
+* avoid temp text domain before locked translation snapshot (CU-869fnp5kv)
+* keep providerContact as arrays to avoid PHP 8.5 ArrayIterator deprecation (CU-869fnmyzq)
+* keep TranslatePress default MO snapshot across translateArray (CU-869fnp5kv)
+* resolve TranslatePress URL slugs in getTranslatedName (CU-869fnp5nc)</details>
+
+<details><summary>Dependency updates @devowl-wp/service-cloud-consumer 1.0.60</summary>
+
+
+**_Purpose of dependency:_** _Consume service and blocker templates from service cloud_
+##### Bug Fixes
+
+* keep providerContact as arrays to avoid PHP 8.5 ArrayIterator deprecation (CU-869fnmyzq)</details>
+
+<details><summary>Development dependency update @devowl-wp/web-scoped-css 1.0.29</summary>
+
+
+**_Purpose of dependency:_** _Define a scoped stylesheet in JavaScript with performance in mind._
+##### Bug Fixes
+
+* dedupe createStylesheet nodes pending fastdom append (CU-869fnnarw)</details>
+
+
+
+
+
+## 5.4.2 (2026-11-05) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.16.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Features
+
+* add a shared Zod schema for TypeORM bigint ids (CU-869e4dnk1)</details>
+
+
+
+
+
+## 5.4.1 (2026-11-03) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-cookie-banner) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Dependency updates @devowl-wp/headless-content-unblocker 1.3.14</summary>
+
+
+**_Purpose of dependency:_** _Unblock mechanism for @devowl-wp/headless-content-blocker with visual capabilities._
+##### Performance Improvements
+
+* shrink gitlab-ci image and skip Buildx unpack on containerize (CU-869fjjqwy)</details>
+
+<details><summary>Development dependency update @devowl-wp/api 1.15.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Bug Fixes
+
+* address Greptile findings for lakehouse and CRS (CU-869e53q55)
+* do not mask Trino errors on cancel header refresh (CU-869e53q55)
+* keep SuperAdmin contract next to the webserver barrel (CU-869e54hv2)
+
+
+##### Code Refactoring
+
+* centralize SuperAdmin guard in api and backend packages
+* decouple schema factories from CreateContractContext (CU-869e55840)
+
+
+##### Documentation
+
+* point SuperAdmin README examples at barrel-local modules
+
+
+##### Features
+
+* compliance and lakehouse API contracts (CU-869e55840)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-integration 0.9.4</summary>
+
+
+**_Purpose of dependency:_** _DevOps macros, job templates and jobs for Gitlab CI and @devowl-wp/node-gitlab-ci._
+##### Bug Fixes
+
+* skip the language-pack and source-map offload when nothing was built (CU-869etm54z)
+
+
+##### Continuous Integration
+
+* auto-stop inactive feature-branch review apps after 3 days (CU-869f92776)
+* lakehouse compose, e2e, and monorepo script wiring (CU-869e55840)
+* parallelize docker review prepare and environment start (CU-869f7c5ad)
+* pull only COMPOSE_SERVICES and drop E2E artifact wait (CU-869f7c5ad)
+* purge stale review-app stacks again on start (CU-869e53q55)
+* wire Dex AuthN lakehouse stack in compose (CU-869e53q55)
+
+
+##### Maintenance
+
+* wire Dex oauth for Trino stack and file ACL (CU-869e53q55)
+
+
+##### Performance Improvements
+
+* shrink gitlab-ci image and skip Buildx unpack on containerize (CU-869fjjqwy)</details>
+
+<details><summary>Development dependency update @devowl-wp/eslint-config 0.3.3</summary>
+
+
+**_Purpose of dependency:_** _Provide eslint configuration for our complete monorepo._
+##### Continuous Integration
+
+* lakehouse compose, e2e, and monorepo script wiring (CU-869e55840)
+
+
+##### Maintenance
+
+* ignore all .ai folders in ESLint and Prettier (CU-869fj8hj9)</details>
+
+
+
+
+
 # 5.4.0 (2026-10-14)
 
 

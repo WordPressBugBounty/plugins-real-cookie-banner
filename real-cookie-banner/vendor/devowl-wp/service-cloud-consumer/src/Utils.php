@@ -70,7 +70,7 @@ class Utils
      * Expand keys to dot notation so `skipKeys` works as expected and can skip
      * multidimensional arrays. This functionality also keeps the reference!
      *
-     * @param mixed $arr
+     * @param array $arr
      * @param string $skipKeys
      * @see https://stackoverflow.com/a/40217420/5506547
      */
@@ -89,11 +89,7 @@ class Utils
                     if (\in_array($dot, $skipKeys, \true)) {
                         continue 2;
                     }
-                    if (\is_array($refValue)) {
-                        $refValue =& $refValue[$dot];
-                    } else {
-                        $refValue =& $refValue->{$dot};
-                    }
+                    $refValue =& $refValue[$dot];
                 }
                 $flatArray[\implode('.', $pathMapping)] =& $refValue;
             }

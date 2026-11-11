@@ -1,7 +1,7 @@
 {
   "vendor-banner.pro.js": {
     "banner-common-async": [
-      "banner-pro-banner-common-async.pro.js?ver=bf18dee9a038d64e"
+      "banner-pro-banner-common-async.pro.js?ver=8c43585501919aa2"
     ],
     "blocker-ui": [
       "banner-pro-blocker-ui.pro.js?ver=97b3c5ca9bee9e8e"
@@ -9,10 +9,10 @@
   },
   "banner.pro.js": {
     "banner-common-async": [
-      "banner-pro-banner-common-async.pro.js?ver=bf18dee9a038d64e"
+      "banner-pro-banner-common-async.pro.js?ver=8c43585501919aa2"
     ],
     "banner-ui": [
-      "banner-pro-banner-ui.pro.js?ver=91a0d3ebbfda2950"
+      "banner-pro-banner-ui.pro.js?ver=6ab8acdab04a73bc"
     ],
     "cookie-policy": [
       "banner-pro-cookie-policy.pro.js?ver=c6b57a71b87f1c88"
@@ -23,7 +23,7 @@
   },
   "blocker.pro.js": {
     "banner-common-async": [
-      "banner-pro-banner-common-async.pro.js?ver=bf18dee9a038d64e"
+      "banner-pro-banner-common-async.pro.js?ver=8c43585501919aa2"
     ],
     "blocker-ui": [
       "banner-pro-blocker-ui.pro.js?ver=97b3c5ca9bee9e8e"

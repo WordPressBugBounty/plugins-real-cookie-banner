@@ -4,34 +4,13 @@ declare (strict_types=1);
 namespace DevOwl\RealCookieBanner\Vendor\JsonMachine;
 
 use DevOwl\RealCookieBanner\Vendor\JsonMachine\Exception\InvalidArgumentException;
-use DevOwl\RealCookieBanner\Vendor\JsonMachine\JsonDecoder\ExtJsonDecoder;
-use DevOwl\RealCookieBanner\Vendor\JsonMachine\JsonDecoder\ItemDecoder;
 /**
  * Entry-point facade for JSON Machine.
  * @internal
  */
 final class Items implements \IteratorAggregate, PositionAware
 {
-    /**
-     * @var iterable
-     */
-    private $chunks;
-    /**
-     * @var string
-     */
-    private $jsonPointer;
-    /**
-     * @var ItemDecoder|null
-     */
-    private $jsonDecoder;
-    /**
-     * @var Parser
-     */
-    private $parser;
-    /**
-     * @var bool
-     */
-    private $debugEnabled;
+    use FacadeTrait;
     /**
      * @param iterable $bytesIterator
      *
@@ -40,77 +19,52 @@ final class Items implements \IteratorAggregate, PositionAware
     public function __construct($bytesIterator, array $options = [])
     {
         $options = new ItemsOptions($options);
-        $this->chunks = $bytesIterator;
-        $this->jsonPointer = $options['pointer'];
-        $this->jsonDecoder = $options['decoder'];
         $this->debugEnabled = $options['debug'];
-        if ($this->debugEnabled) {
-            $tokensClass = TokensWithDebugging::class;
-        } else {
-            $tokensClass = Tokens::class;
-        }
-        $this->parser = new Parser(new $tokensClass($this->chunks), $this->jsonPointer, $this->jsonDecoder ?: new ExtJsonDecoder());
+        $this->parser = $this->createParser($bytesIterator, $options, \false);
     }
     /**
      * @param string $string
      *
-     * @return self
-     *
      * @throws InvalidArgumentException
      */
-    public static function fromString($string, array $options = [])
+    public static function fromString($string, array $options = []) : self
     {
         return new self(new StringChunks($string), $options);
     }
     /**
      * @param string $file
      *
-     * @return self
-     *
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromFile($file, array $options = [])
+    public static function fromFile($file, array $options = []) : self
     {
         return new self(new FileChunks($file), $options);
     }
     /**
      * @param resource $stream
      *
-     * @return self
-     *
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromStream($stream, array $options = [])
+    public static function fromStream($stream, array $options = []) : self
     {
         return new self(new StreamChunks($stream), $options);
     }
     /**
      * @param iterable $iterable
      *
-     * @return self
-     *
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromIterable($iterable, array $options = [])
+    public static function fromIterable($iterable, array $options = []) : self
     {
         return new self($iterable, $options);
     }
     /**
      * @return \Generator
-     *
-     * @throws Exception\PathNotFoundException
      */
     #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->parser->getIterator();
-    }
-    /**
-     * @throws Exception\JsonMachineException
-     */
-    public function getPosition()
-    {
-        return $this->parser->getPosition();
     }
     public function getJsonPointers() : array
     {
@@ -129,12 +83,5 @@ final class Items implements \IteratorAggregate, PositionAware
     public function getMatchedJsonPointer() : string
     {
         return $this->parser->getMatchedJsonPointer();
-    }
-    /**
-     * @return bool
-     */
-    public function isDebugEnabled()
-    {
-        return $this->debugEnabled;
     }
 }

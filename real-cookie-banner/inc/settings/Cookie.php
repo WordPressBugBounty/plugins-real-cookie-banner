@@ -7,7 +7,6 @@ use DevOwl\RealCookieBanner\Core;
 use DevOwl\RealCookieBanner\Vendor\DevOwl\ServiceCloudConsumer\templates\ServiceTemplate;
 use DevOwl\RealCookieBanner\Vendor\MatthiasWeb\Utils\Service;
 use DevOwl\RealCookieBanner\Vendor\MatthiasWeb\Utils\Utils;
-use stdClass;
 use WP_Error;
 use WP_Post;
 use WP_REST_Posts_Controller;
@@ -151,7 +150,8 @@ class Cookie
             $posts = $allPosts;
         }
         foreach ($posts as &$post) {
-            $post->metas = ['providerContact' => new stdClass()];
+            // Fixed keys so json_encode emits `{}`-shaped objects, never `[]`.
+            $post->metas = ['providerContact' => ['phone' => '', 'email' => '', 'link' => '']];
             foreach (self::META_KEYS as $meta_key) {
                 $metaValue = \get_post_meta($post->ID, $meta_key, \true);
                 switch ($meta_key) {
@@ -182,7 +182,7 @@ class Cookie
                     case self::META_NAME_PROVIDER_CONTACT_EMAIL:
                     case self::META_NAME_PROVIDER_CONTACT_LINK:
                         $meta_key = \lcfirst(\substr($meta_key, \strlen('providerContact')));
-                        $post->metas['providerContact']->{$meta_key} = $metaValue;
+                        $post->metas['providerContact'][$meta_key] = $metaValue;
                         $meta_key = null;
                         break;
                     default:

@@ -57,7 +57,7 @@ class Utils
      * You can use regular expressions in the skip keys to match parts of the path,
      * e.g. "/technicalDefinitions\.\d+\.(?!purpose)/"
      *
-     * @param mixed $arr
+     * @param array $arr
      * @param string[] $skipKeys
      * @param callable $skipKeysByCallback
      * @see https://stackoverflow.com/a/40217420/5506547
@@ -89,11 +89,7 @@ class Utils
                     if (\in_array($dot, $skipKeys, \true)) {
                         continue 2;
                     }
-                    if (\is_array($refValue)) {
-                        $refValue =& $refValue[$dot];
-                    } else {
-                        $refValue =& $refValue->{$dot};
-                    }
+                    $refValue =& $refValue[$dot];
                 }
                 $path = \implode('.', $pathMapping);
                 if (\is_callable($skipKeysByCallback) && $skipKeysByCallback($path, $refValue) || !empty($regexSkipKeys) && \preg_match('/' . $regexSkipKeys . '/', $path)) {

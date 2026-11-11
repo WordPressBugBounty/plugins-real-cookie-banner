@@ -162,7 +162,24 @@ class TranslatePress extends AbstractOutputBufferPlugin
     // Documented in AbstractLanguagePlugin
     public function getTranslatedName($locale)
     {
-        return $this->getTrpLanguageManager()->get_language_names([$locale])[$locale];
+        if (!\is_string($locale) || $locale === '') {
+            return '';
+        }
+        // Callers may pass TRP URL slugs (`en`/`de`) while get_language_names is keyed by
+        // WordPress locales (`en_US`/`de_DE`) — resolve via url-slugs before indexing (CU-869fnp5nc).
+        $lookup = $locale;
+        $urlSlugs = $this->getTrpSettingsManager()->get_setting('url-slugs', []);
+        if (\is_array($urlSlugs) && !isset($urlSlugs[$locale])) {
+            $found = \array_search($locale, $urlSlugs, \true);
+            if (\is_string($found) && $found !== '') {
+                $lookup = $found;
+            }
+        }
+        $names = $this->getTrpLanguageManager()->get_language_names([$lookup]);
+        if (\is_array($names) && isset($names[$lookup]) && $names[$lookup] !== '') {
+            return $names[$lookup];
+        }
+        return $locale;
     }
     // Documented in AbstractLanguagePlugin
     public function getCountryFlag($locale)

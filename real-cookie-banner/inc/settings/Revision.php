@@ -3,6 +3,7 @@
 namespace DevOwl\RealCookieBanner\settings;
 
 use DevOwl\RealCookieBanner\Vendor\DevOwl\CookieConsentManagement\frontend\AbstractRevisionPersistance;
+use DevOwl\RealCookieBanner\Vendor\DevOwl\CookieConsentManagement\Utils as CookieConsentManagementUtils;
 use DevOwl\RealCookieBanner\base\UtilsProvider;
 use DevOwl\RealCookieBanner\comp\RevisionBackwardsCompatibility;
 use DevOwl\RealCookieBanner\Core;
@@ -117,14 +118,7 @@ class Revision extends AbstractRevisionPersistance
      */
     public function needsRetrigger($revision)
     {
-        $needsRetrigger = $revision['public_to_users'] !== $revision['calculated'];
-        if ($needsRetrigger) {
-            // Got this calculated hash dismissed?
-            $dismissedHash = Core::getInstance()->getNotices()->getStates()->get(Notices::NOTICE_REVISON_REQUEST_NEW_CONSENT_PREFIX . $this->getContextVariablesString());
-            if (!empty($dismissedHash) && $dismissedHash === $revision['calculated']) {
-                $needsRetrigger = \false;
-            }
-        }
+        $needsRetrigger = $revision['public_to_users'] !== $revision['calculated'] && !$this->isCalculatedHashDismissed($revision['calculated']);
         /**
          * Checks if the revision(s) needs a retrigger. This can be useful if you create your own context
          * and you want to show a "Request new consents" button in the admin page.
@@ -135,6 +129,61 @@ class Revision extends AbstractRevisionPersistance
          * @since 1.7.4
          */
         return \apply_filters('RCB/Revision/NeedsRetrigger', $needsRetrigger);
+    }
+    /**
+     * Check if the "Request new consent" notice got dismissed for this calculated hash in the current context.
+     *
+     * @param string $calculatedHash
+     */
+    public function isCalculatedHashDismissed($calculatedHash)
+    {
+        $dismissedHash = Core::getInstance()->getNotices()->getStates()->get(Notices::NOTICE_REVISON_REQUEST_NEW_CONSENT_PREFIX . $this->getContextVariablesString());
+        return !empty($dismissedHash) && $dismissedHash === $calculatedHash;
+    }
+    /**
+     * Mark the calculated revision as "no new consent needed" when it differs from the revision public to users only
+     * in how HTML special characters of the cookie policy headings are encoded (e.g. `&` vs. `&amp;`). The public
+     * hash is not touched, so no visitor gets asked again. Any other difference keeps the "Request new consent" notice.
+     *
+     * @return boolean `true` if the notice got dismissed for the current context
+     */
+    public function dismissRetriggerCausedByCookiePolicyEncodingOnly()
+    {
+        $publicHash = $this->getCurrentHash();
+        $calculated = $this->getRevision()->create(\false);
+        if (empty($publicHash) || $publicHash === $calculated['hash']) {
+            return \false;
+        }
+        $public = $this->getByHash($publicHash);
+        if ($public === null) {
+            return \false;
+        }
+        // Normalize both sides through JSON so types are comparable with the persisted revision
+        $calculatedRevision = \json_decode(\json_encode($calculated['revision']), ARRAY_A);
+        $publicCookiePolicy = isset($public['cookiePolicy']) ? $public['cookiePolicy'] : null;
+        $calculatedCookiePolicy = isset($calculatedRevision['cookiePolicy']) ? $calculatedRevision['cookiePolicy'] : null;
+        unset($public['cookiePolicy'], $calculatedRevision['cookiePolicy']);
+        if ($publicCookiePolicy === null || $calculatedCookiePolicy === null || \json_encode($public) !== \json_encode($calculatedRevision)) {
+            return \false;
+        }
+        // Only decode inside the elements whose output got escaped (headings and table of contents entries), so any
+        // other change of the cookie policy still keeps the notice
+        $decode = function ($html) {
+            $html = (string) CookieConsentManagementUtils::gzUncompressForDatabase($html, '');
+            $decoded = \preg_replace_callback('/(<h2[^>]*>)(.*?)(<\\/h2>)|(<li><a href="#[^"]*">)(.*?)(<\\/a><\\/li>)/s', function ($m) {
+                $isHeading = $m[1] !== '';
+                $content = $isHeading ? $m[2] : $m[5];
+                $decoded = \html_entity_decode($content, \ENT_QUOTES | \ENT_HTML5, 'UTF-8');
+                return $isHeading ? $m[1] . $decoded . $m[3] : $m[4] . $decoded . $m[6];
+            }, $html);
+            // On a regex error compare the raw HTML, which keeps the notice
+            return $decoded ?? $html;
+        };
+        if ($decode($publicCookiePolicy) !== $decode($calculatedCookiePolicy)) {
+            return \false;
+        }
+        Core::getInstance()->getNotices()->getStates()->set(Notices::NOTICE_REVISON_REQUEST_NEW_CONSENT_PREFIX . $this->getContextVariablesString(), $calculated['hash']);
+        return \true;
     }
     /**
      * See filter RCB/Revision/Context/Translate.

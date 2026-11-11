@@ -285,6 +285,24 @@ class CookieGroup
         return $texts;
     }
     /**
+     * Whether any non-default (custom) service group exists.
+     *
+     * Uses `getOrdered` only — never `toJson` / `translateArray`. Callers that only need
+     * this boolean must not go through consent-management `getNonDefaultServiceGroups`,
+     * which materialises and translates every group and service.
+     *
+     * @param boolean $force
+     */
+    public function hasNonDefault($force = \false)
+    {
+        foreach ($this->getOrdered($force) as $group) {
+            if (!($group->metas[self::META_NAME_IS_DEFAULT] ?? \false)) {
+                return \true;
+            }
+        }
+        return \false;
+    }
+    /**
      * Get only the essential group ID. This method can be more efficient compared to
      * `getEssentialGroup` because it does no casts and additional queries.
      *

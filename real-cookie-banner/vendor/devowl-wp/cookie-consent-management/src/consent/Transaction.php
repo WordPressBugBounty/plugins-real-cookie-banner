@@ -206,7 +206,8 @@ class Transaction
      */
     public function setReferer($referer)
     {
-        $this->referer = !\is_string($referer) || !\filter_var($referer, \FILTER_VALIDATE_URL) ? null : $referer;
+        // `FILTER_VALIDATE_URL` also accepts e.g. `javascript://`, which must never end up as link in the consent list
+        $this->referer = !\is_string($referer) || !\filter_var($referer, \FILTER_VALIDATE_URL) || !\preg_match('/^https?:\\/\\//i', $referer) ? null : $referer;
     }
     /**
      * Set the blocker.

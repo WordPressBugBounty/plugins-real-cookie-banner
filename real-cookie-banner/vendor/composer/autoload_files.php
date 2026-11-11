@@ -11,4 +11,5 @@ return array(
     'cd48e99dc39649f6529395d65373ee16' => $vendorDir . '/devowl-wp/real-product-manager-wp-client/src/autoload.php',
     '3b53485dc9f3bb8dad60976677e215b5' => $vendorDir . '/devowl-wp/real-queue/src/autoload.php',
     'b45694f813fe096b704a1908536cfec0' => $vendorDir . '/devowl-wp/real-utils/src/autoload.php',
+    'ace6d88241f812b4accb2d847454aef6' => $vendorDir . '/halaxa/json-machine/src/functions.php',
 );

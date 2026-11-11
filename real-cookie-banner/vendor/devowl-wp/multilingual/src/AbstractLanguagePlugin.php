@@ -417,11 +417,15 @@ abstract class AbstractLanguagePlugin
         if (\count($this->getActiveLanguages()) < 2) {
             return $content;
         }
-        // Snapshot current translations
         $useLocale = empty($locale) ? $this->getCurrentLanguageFallback() : $locale;
-        // Snapshot default language for `findI18nKeyOfTranslation`
-        $this->createTemporaryTextDomain($this->getDefaultLanguage(), \true);
-        $this->snapshotCurrentTranslations(\true);
+        // Default-language MO snapshot for `findI18nKeyOfTranslation`. Keep it for the request:
+        // force+unset on every call made TranslatePress re-run `translate_page` for HTML splits.
+        $defaultLanguage = $this->getDefaultLanguage();
+        $defaultWpLocale = $this->getWordPressCompatibleLanguageCode($defaultLanguage);
+        if (!isset($this->currentTranslationEntries) || ($this->currentTranslationEntries['locale'] ?? '') !== $defaultWpLocale) {
+            $this->createTemporaryTextDomain($defaultLanguage, \true);
+            $this->snapshotCurrentTranslations(\true);
+        }
         $this->createTemporaryTextDomain($useLocale, \true);
         $cache =& $this->translateArrayCache[$useLocale];
         if (!\is_array($cache)) {
@@ -441,9 +445,7 @@ abstract class AbstractLanguagePlugin
             }
         });
         $this->translateStrings($referenceMap, $useLocale, $context);
-        // Teardown
         $this->teardownTemporaryTextDomain();
-        $this->unsetCurrentTranslations();
         return $content;
     }
     /**
@@ -748,20 +750,33 @@ abstract class AbstractLanguagePlugin
      */
     public function snapshotCurrentTranslations($force = \false)
     {
-        if (!isset($this->currentTranslationEntries) && !$this->lockCurrentTranslations || $force) {
-            $teardownTd = \false;
-            if ($this->temporaryTextDomain === null) {
-                $teardownTd = $this->createTemporaryTextDomain($this->getCurrentLanguageFallback());
-            }
-            $this->currentTranslationEntries = ['locale' => $this->temporaryTextDomain->getLocale(), 'items' => $this->temporaryTextDomain->getEntries(), 'mode' => 'temporaryTextDomain'];
-            // Allow to add additional entries by splitting them
-            $this->splitTranslationEntries($this->currentTranslationEntries['items']);
+        // Locked catalogs (e.g. `withSourceTranslationCatalog`) stay pinned until unlocked.
+        // Check before creating a temporary text domain — otherwise a lock early-return leaves a
+        // source-locale domain that `switchToLanguage` will not replace (`force` false).
+        if (!$force && $this->lockCurrentTranslations) {
+            return \false;
+        }
+        $teardownTd = \false;
+        if ($this->temporaryTextDomain === null) {
+            $teardownTd = $this->createTemporaryTextDomain($this->getCurrentLanguageFallback());
+        }
+        if (!$force && isset($this->currentTranslationEntries) && ($this->currentTranslationEntries['locale'] ?? null) === $this->temporaryTextDomain->getLocale()) {
+            // Reuse when locale matches; rebuild when another path left a different locale snapshotted
+            // (e.g. `translateArray` keeps the default-language snapshot for the request).
             if ($teardownTd) {
                 $this->teardownTemporaryTextDomain();
             }
-            return \true;
+            return \false;
         }
-        return \false;
+        // Drop previous SplObjectStorage keys so forced/mismatched rebuilds do not retain dead entries.
+        $this->splitTranslationEntriesCache = new SplObjectStorage();
+        $this->currentTranslationEntries = ['locale' => $this->temporaryTextDomain->getLocale(), 'items' => $this->temporaryTextDomain->getEntries(), 'mode' => 'temporaryTextDomain'];
+        // Allow to add additional entries by splitting them
+        $this->splitTranslationEntries($this->currentTranslationEntries['items']);
+        if ($teardownTd) {
+            $this->teardownTemporaryTextDomain();
+        }
+        return \true;
     }
     /**
      * Unset current translations.

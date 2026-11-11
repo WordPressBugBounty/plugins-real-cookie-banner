@@ -1,7 +1,7 @@
 === Real Cookie Banner: GDPR & ePrivacy Cookie Consent ===
 Contributors: devowl, mguenter, jankarres
 Tags: cookie banner, cookie plugin, cookie consent, gdpr, eprivacy
-Stable tag: 5.4.0
+Stable tag: 5.4.3
 Requires at least: 6.1
 Requires PHP: 7.4.0
 Tested up to: 7.1
@@ -177,6 +177,9 @@ You can see what’s new in the [**changelog on our website**](https://devowl.io
 
 = Security notices =
 
+* Real Cookie Banner 5.4.2 or older had a Cross-Site Scripting (XSS) vulnerability. On websites with open comments, a specially crafted visitor comment could run scripts in the browser of anyone who later opened that page. We strongly recommend to install updates to 5.4.3 or newer!
+* Real Cookie Banner 5.4.2 or older had a Cross-Site Scripting (XSS) vulnerability in the list of consents. A specially crafted consent could add a link that ran scripts in the browser of an administrator who clicked it. We strongly recommend to install updates to 5.4.3 or newer!
+* Real Cookie Banner 5.4.2 or older had an XSS vulnerability in the headings of the cookie policy. It could be exploited by logged in WordPress users who are allowed to customize the cookie banner but not to add unfiltered HTML (for example site admins in a multisite). We strongly recommend to install updates to 5.4.3 or newer!
 * Real Cookie Banner PRO 5.3.9 or older had a Cross-Site Scripting (XSS) vulnerability when the Transparency & Consent Framework (TCF) is active. Cookie information published by a TCF vendor could run scripts in the browser of visitors who opened the privacy settings of the cookie banner or the cookie policy page. We strongly recommend to install updates to 5.4.0 or newer!
 * Real Cookie Banner 5.3.5 or older had a Cross-Site Scripting (XSS) vulnerability (CVE-2026-92977). On websites with open comments, a specially crafted visitor comment could run scripts in the browser of anyone who later opened that page. We strongly recommend to install updates to 5.3.6 or newer!
 * Real Cookie Banner 3.4.9 or older had an XSS vulnerability in the class parameter of its shortcodes. It could be exploited by users who are allowed to add shortcodes to content. We strongly recommend to install updates to 3.4.10 or newer!

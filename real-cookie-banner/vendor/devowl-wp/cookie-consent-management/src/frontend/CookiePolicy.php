@@ -90,7 +90,7 @@ class CookiePolicy
             $output[] = \wpautop(\sprintf('<p>%s</p>', $additionalContent));
         }
         if (\in_array('table-of-contents', $sectionsToRender, \true)) {
-            \array_unshift($output, \sprintf('<h2>%s</h2><ul>%s</ul>', $cookiePolicySettings->getHeadlineTableOfContents(), \join('', \array_map(function ($value) use($toc) {
+            \array_unshift($output, \sprintf('<h2>%s</h2><ul>%s</ul>', \esc_html($cookiePolicySettings->getHeadlineTableOfContents()), \join('', \array_map(function ($value) use($toc) {
                 return \sprintf('<li><a href="#%s">%s</a></li>', $value, $toc[$value]);
             }, \array_keys($toc)))));
         }
@@ -131,7 +131,7 @@ class CookiePolicy
     public function renderListOfServicesSectionHtml(&$toc)
     {
         $settings = $this->getCookieConsentManagement()->getSettings();
-        $headline = $this->getSettings()->getHeadlineListOfServices();
+        $headline = \esc_html($this->getSettings()->getHeadlineListOfServices());
         $columnLabels = $this->getSettings()->getListOfServicesTableColumnLabels();
         $gridJsLanguageTexts = $this->getSettings()->getGridJsLanguageTexts();
         $isTableDarkMode = $this->getSettings()->isTableDarkMode();
@@ -276,7 +276,7 @@ class CookiePolicy
      */
     public function renderCookiesOriginSectionHtml(&$toc)
     {
-        $headline = $this->getSettings()->getHeadlineCookieOrigin();
+        $headline = \esc_html($this->getSettings()->getHeadlineCookieOrigin());
         $content = $this->getSettings()->getContentCookiesOrigin();
         if (empty($headline) || empty($content)) {
             return '';
@@ -292,7 +292,7 @@ class CookiePolicy
      */
     public function renderManageCookiesSectionHtml(&$toc)
     {
-        $headline = $this->getSettings()->getHeadlineManageCookies();
+        $headline = \esc_html($this->getSettings()->getHeadlineManageCookies());
         $content = $this->getSettings()->getContentManageCookies();
         if (empty($headline) || empty($content)) {
             return '';
@@ -307,7 +307,7 @@ class CookiePolicy
      */
     public function renderTypesOfCookiesSectionHtml(&$toc)
     {
-        $headline = $this->getSettings()->getHeadlineTypesOfCookies();
+        $headline = \esc_html($this->getSettings()->getHeadlineTypesOfCookies());
         $content = $this->getSettings()->getContentTypesOfCookies();
         if (empty($headline) || empty($content)) {
             return '';
@@ -322,7 +322,7 @@ class CookiePolicy
      */
     public function renderRightsOfVisitorSectionHtml(&$toc)
     {
-        $headline = $this->getSettings()->getHeadlineRightsOfTheVisitor();
+        $headline = \esc_html($this->getSettings()->getHeadlineRightsOfTheVisitor());
         $content = $this->getSettings()->getContentRightsOfVisitor();
         if (empty($headline) || empty($content)) {
             return '';
@@ -338,7 +338,7 @@ class CookiePolicy
     public function renderLegalBasisSectionHtml(&$toc)
     {
         $legalBasis = $this->getCookieConsentManagement()->getSettings()->getGeneral()->getTerritorialLegalBasis();
-        $headline = $this->getSettings()->getHeadlineLegalBasis();
+        $headline = \esc_html($this->getSettings()->getHeadlineLegalBasis());
         $content = [];
         foreach ($legalBasis as $l) {
             switch ($l) {
@@ -366,7 +366,7 @@ class CookiePolicy
      */
     public function renderCookieTechnologySectionHtml(&$toc)
     {
-        $headline = $this->getSettings()->getHeadlineCookieTechnology();
+        $headline = \esc_html($this->getSettings()->getHeadlineCookieTechnology());
         $content = $this->getSettings()->getContentCookieTechnology();
         if (empty($headline) || empty($content)) {
             return '';
@@ -381,7 +381,7 @@ class CookiePolicy
      */
     public function renderDiffToPrivacyPolicySectionHtml(&$toc)
     {
-        $headline = $this->getSettings()->getHeadlineDiffToPrivacyPolicy();
+        $headline = \esc_html($this->getSettings()->getHeadlineDiffToPrivacyPolicy());
         $content = $this->getSettings()->getContentDiffToPrivacyPolicy();
         if (empty($headline) || empty($content)) {
             return '';
@@ -399,7 +399,7 @@ class CookiePolicy
         $settings = $this->getCookieConsentManagement()->getSettings();
         $generalSettings = $settings->getGeneral();
         $cookiePolicySettings = $this->getSettings();
-        $headline = $cookiePolicySettings->getHeadlineControllerOfWebsite();
+        $headline = \esc_html($cookiePolicySettings->getHeadlineControllerOfWebsite());
         $listItems = [];
         $address = $generalSettings->getOperatorContactAddress();
         $country = $generalSettings->getOperatorCountry();

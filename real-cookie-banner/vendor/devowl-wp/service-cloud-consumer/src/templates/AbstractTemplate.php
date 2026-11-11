@@ -258,12 +258,13 @@ abstract class AbstractTemplate
      * `array_map` more easier.
      *
      * @param AbstractTemplate $template
+     * @return array
      */
     public static function toArray($template)
     {
-        $res = \json_decode(\json_encode($template));
-        $res->createdAt = \gmdate('c', $res->createdAt);
-        $res->{'$$skipFastHtmlTag'} = ['HeadlessContentBlocker'];
+        $res = \json_decode(\json_encode($template), ARRAY_A);
+        $res['createdAt'] = \gmdate('c', $res['createdAt']);
+        $res['$$skipFastHtmlTag'] = ['HeadlessContentBlocker'];
         return $res;
     }
     /**

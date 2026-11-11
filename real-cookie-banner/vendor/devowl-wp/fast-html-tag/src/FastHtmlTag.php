@@ -16,6 +16,12 @@ class FastHtmlTag
      */
     const SKIP_KEY = '$$skipFastHtmlTag';
     /**
+     * See `getMarkerToken`.
+     *
+     * @var string|null
+     */
+    private static $markerToken = null;
+    /**
      * Unique name of this instance.
      *
      * Can be useful in conjunction with `$$skipFastHtmlTag`.
@@ -168,16 +174,26 @@ class FastHtmlTag
     /**
      * Remove all invisible attributes (see `AbstractMatch::setInvisibleAttribute`) from a given HTML string.
      *
-     * The pattern matches a whole `prefix-<key>="<value>"` attribute so it can never consume a neighbouring
-     * attribute's quote delimiter (which would turn inert user content, e.g. an approved comment, into
-     * executable HTML). The `(?<!\s)` anchor keeps matching linear on the JS twin.
-     * Pattern with test cases: https://regex101.com/r/SHtewb/1
+     * The prefix carries the per-request marker token, so the sweep only ever matches attributes this request
+     * emitted and can never start inside foreign markup such as an approved comment. The pattern still matches
+     * a whole `prefix-<key>="<value>"` attribute, and the `(?<!\s)` anchor keeps matching linear on the JS twin.
      *
      * @param string $html
      */
     public static function removeInvisibleAttributes($html)
     {
-        return \preg_replace(\sprintf('/(?<!\\s)\\s+%s[^\\s=>\\/"\']+="[^"]*"/m', AbstractMatch::HTML_ATTRIBUTE_INVISIBLE_PREFIX), '', $html);
+        return \preg_replace(\sprintf('/(?<!\\s)\\s+%s[^\\s=>\\/"\']+="[^"]*"/m', AbstractMatch::getInvisibleAttributePrefix()), '', $html);
+    }
+    /**
+     * Random token, unique per request, that internal HTML markers carry (e.g. invisible attributes). Markup
+     * written before this request (stored comments, post content) can therefore never forge such a marker.
+     */
+    public static function getMarkerToken()
+    {
+        if (self::$markerToken === null) {
+            self::$markerToken = \bin2hex(\random_bytes(6));
+        }
+        return self::$markerToken;
     }
     /**
      * HTML comment that opens a skip island for `modifyHtml`.

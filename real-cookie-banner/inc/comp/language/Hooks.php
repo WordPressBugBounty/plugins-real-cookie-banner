@@ -193,8 +193,9 @@ class Hooks
         if ($needs_retrigger === \false && $compLanguage instanceof AbstractOutputBufferPlugin) {
             $found = \false;
             $compLanguage->iterateOtherLanguagesContext(function () use(&$found) {
-                $revision = Revision::getInstance()->getCurrent();
-                if ($revision['public_to_users'] !== $revision['calculated']) {
+                $revisionInstance = Revision::getInstance();
+                $revision = $revisionInstance->getCurrent();
+                if ($revision['public_to_users'] !== $revision['calculated'] && !$revisionInstance->isCalculatedHashDismissed($revision['calculated'])) {
                     $found = \true;
                 }
             });

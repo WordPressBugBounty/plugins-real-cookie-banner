@@ -56,6 +56,15 @@ class ImagePreview extends AbstractPlugin
      */
     private $cache;
     /**
+     * Attribute that carries the resolved embed URL to the `afterSetup` sweep. Unlike the public
+     * `HTML_ATTRIBUTE_TO_FETCH_URL_FROM` input it includes the per-request marker token, so the page-wide sweep
+     * can never match inside foreign markup such as an approved comment.
+     */
+    public static function getInternalFetchAttribute()
+    {
+        return self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM . '-' . FastHtmlTag::getMarkerToken();
+    }
+    /**
      * Init.
      */
     public function init()
@@ -75,7 +84,8 @@ class ImagePreview extends AbstractPlugin
      */
     public function checkResult($result, $matcher, $match)
     {
-        $attr = $match->getAttribute(self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM);
+        // Falls back to the internal attribute when the HTML gets processed again (rerun)
+        $attr = $match->getAttribute(self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM) ?? $match->getAttribute(self::getInternalFetchAttribute());
         if ($attr !== null && $result->isBlocked()) {
             $result->setData(self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM, $attr);
         }
@@ -128,7 +138,8 @@ class ImagePreview extends AbstractPlugin
             if ($blockable instanceof ImagePreviewBlockable && $blockable->downloadImagePreviewFor($foundUrl, $result, $match)) {
                 // Set the HTML attribute for our blocked item, so our `afterSetup` callback can retrieve it
                 // and send requests in bulk.
-                $match->setAttribute(self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM, \json_encode([
+                $match->setAttribute(self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM, null);
+                $match->setAttribute(self::getInternalFetchAttribute(), \json_encode([
                     'blockable' => $blockable->getBlockerId(),
                     'url' => Thumbnail::normalizeEmbedUrl($foundUrl),
                     // Allow to override aspect ratio from `width` and `height` HTML attributes
@@ -228,8 +239,8 @@ class ImagePreview extends AbstractPlugin
             if ($this->cache === null) {
                 return $html;
             }
-            // @see https://regex101.com/r/J48TeA/1
-            $regex = \sprintf('/(%s="[^"]+")/m', self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM);
+            $internalAttribute = self::getInternalFetchAttribute();
+            $regex = \sprintf('/(%s="[^"]+")/m', \preg_quote($internalAttribute, '/'));
             // First, extract all URLs so we can batch them
             if (\preg_match_all($regex, $html, $urlsToFetch, \PREG_SET_ORDER, 0)) {
                 $urlsToFetch = \array_column($urlsToFetch, 1);
@@ -237,7 +248,7 @@ class ImagePreview extends AbstractPlugin
                 // Read valid URLs and use them as matches and also create requests
                 foreach ($urlsToFetch as &$val) {
                     $val = FastHtmlTagUtils::parseHtmlAttributes($val);
-                    $val = $val[self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM] ?? null;
+                    $val = $val[$internalAttribute] ?? null;
                     if ($val !== null) {
                         $val = FastHtmlTagUtils::isJson($val);
                         if ($val !== \false) {
@@ -259,9 +270,9 @@ class ImagePreview extends AbstractPlugin
                 $this->fetchMetadata($urlToThumbnail);
                 $this->cache->allowance($urlToThumbnail);
                 // Do the replacement
-                $html = \preg_replace_callback($regex, function ($m) use($urlToThumbnail) {
+                $html = \preg_replace_callback($regex, function ($m) use($urlToThumbnail, $internalAttribute) {
                     $embedUrl = FastHtmlTagUtils::parseHtmlAttributes($m[0]);
-                    $embedUrl = $embedUrl[self::HTML_ATTRIBUTE_TO_FETCH_URL_FROM] ?? null;
+                    $embedUrl = $embedUrl[$internalAttribute] ?? null;
                     if ($embedUrl === null) {
                         return '';
                     }
